@@ -20,32 +20,28 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class MenuScreen implements Screen {
 
-    //Organizing the code in MenuScreen.java
+    MyGdxGame game; // Note it’s "MyGdxGame" not "Game"
 
     // Images and Backgrounds
     Texture title;
     Texture mainbackground;
-
     Texture terrain;
 
-    MyGdxGame game; // Note it’s "MyGdxGame" not "Game"
     private SpriteBatch batch;
     private Skin skin;
     private Stage stage;
 
-    //for the use of play image button
+    //Image button created for the play the game
     ImageButton playbutton;
     Texture playTexture;
     TextureRegion playTextureRegion;
     TextureRegionDrawable playTexRegionDrawable;
 
-    //for the use of exit image button
+    //Image button created for exit game
     ImageButton exitButton;
     Texture exitTexture;
     TextureRegion exitTextureRegion;
     TextureRegionDrawable exitTexRegionDrawable;
-
-
 
 
 
@@ -57,16 +53,21 @@ public class MenuScreen implements Screen {
 
 
     public void create() {
+
         Gdx.app.log("MenuScreen: ","menuScreen create");
+
+
         batch = new SpriteBatch();
         skin = new Skin(Gdx.files.internal("gui/uiskin.json"));
         stage = new Stage();
+
+        //Adding textures for main background, tile and terrain
         mainbackground = new Texture("UI/bg01.png");
         title = new Texture("UI/Tittle.png");
         terrain = new Texture("Terain/3.png");
 
 
-        // 2nd addition image button to play
+        //Creating Play button
         playTexture = new Texture(Gdx.files.internal("UI/PlayBtn.png"));
         playTextureRegion = new TextureRegion(playTexture);
         playTexRegionDrawable = new TextureRegionDrawable(playTextureRegion);
@@ -75,6 +76,8 @@ public class MenuScreen implements Screen {
         playbutton.setPosition(Gdx.graphics.getWidth() /2 - (playbutton.getWidth()/2) -200, Gdx.graphics.getHeight()/2 - 300f);
         stage.addActor(playbutton);
         Gdx.input.setInputProcessor(stage);
+
+        //When pressed takes player to game screen
         playbutton.addListener(new ClickListener()
         {
             @Override
@@ -84,7 +87,7 @@ public class MenuScreen implements Screen {
             }
         });
 
-        // 2nd addition image button to exit
+        // Creating exit Button
         exitTexture = new Texture(Gdx.files.internal("UI/CloseBtn.png"));
         exitTextureRegion = new TextureRegion(exitTexture);
         exitTexRegionDrawable = new TextureRegionDrawable(exitTextureRegion);
@@ -92,6 +95,8 @@ public class MenuScreen implements Screen {
 
         exitButton.setPosition(Gdx.graphics.getWidth() /2 - (exitButton.getWidth()/2) , Gdx.graphics.getHeight()/2 - 300f);
         stage.addActor(exitButton);
+
+        //When pressed, exits the game
         Gdx.input.setInputProcessor(stage);
         exitButton.addListener(new ClickListener()
         {
@@ -102,17 +107,18 @@ public class MenuScreen implements Screen {
             }
         });
 
-//        
+//
 
     }
 
     public void render(float f) {
 
         batch.begin();
-
+        //Draw main background, title and terrain
         batch.draw(mainbackground, 0, 0);//draw background
         batch.draw(title,500f , Gdx.graphics.getHeight()/2 -50f );
         batch.draw(terrain, 0,0);
+
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
         batch.end();
@@ -120,6 +126,8 @@ public class MenuScreen implements Screen {
 
     @Override
     public void dispose() {
+
+        //Dispose of all the textures
         title.dispose();
         mainbackground.dispose();
         playTexture.dispose();
@@ -140,7 +148,6 @@ public class MenuScreen implements Screen {
     @Override
     public void show() {
         Gdx.app.log("MenuScreen: ","menuScreen show called");
-
         create();
     }
 
