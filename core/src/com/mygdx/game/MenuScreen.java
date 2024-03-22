@@ -20,6 +20,8 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class MenuScreen implements Screen {
 
+    //Organizing the code in MenuScreen.java
+
     // Images and Backgrounds
     Texture title;
     Texture mainbackground;
@@ -100,42 +102,7 @@ public class MenuScreen implements Screen {
             }
         });
 
-//        //Create button to play
-//        final TextButton playButton = new TextButton("Play", skin, "default");
-//        playButton.setWidth(400f);
-//        playButton.setHeight(300f);
-//        playButton.setColor(Color.GREEN);
-//        playButton.setPosition(Gdx.graphics.getWidth() /2 - 600f, Gdx.graphics.getHeight()/2 - 200f);
-//        stage.addActor(playButton);
-//        Gdx.input.setInputProcessor(stage);
-//
-//        playButton.addListener(new ClickListener()
-//        {
-//            @Override
-//            public void clicked (InputEvent event, float x, float y)
-//            {
-//                game.setScreen(MyGdxGame.gameScreen);
-//            }
-//        });
-//
-//        //Create button to Exit
-//        final TextButton exitButton = new TextButton("Exit", skin, "default");
-//        exitButton.setWidth(400f);
-//        exitButton.setHeight(300f);
-//        exitButton.setColor(Color.RED);
-//        exitButton.setPosition(Gdx.graphics.getWidth() /2 + 300f, Gdx.graphics.getHeight()/2 - 200f);
-//        stage.addActor(exitButton);
-//        Gdx.input.setInputProcessor(stage);
-//
-//        exitButton.addListener(new ClickListener()
-//        {
-//            @Override
-//            public void clicked (InputEvent event, float x, float y)
-//            {
-//                Gdx.app.exit();
-//
-//            }
-//        });
+//        
 
     }
 
