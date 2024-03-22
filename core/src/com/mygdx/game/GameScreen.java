@@ -16,17 +16,23 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class GameScreen implements Screen {
     MyGdxGame game; // Note it’s "MyGdxGame" not "Game"
 
-    SpriteBatch batch;
-    Texture background;
-
-    //for the use of exit image button
     Stage stage;
+    SpriteBatch batch;
+
+    //Textures for backgrounds and terrain
+    Texture background1;
+    Texture background2;
+
+    Texture terrain;
+
     ImageButton exitButton;
     Texture exitTexture;
     TextureRegion exitTextureRegion;
     TextureRegionDrawable exitTexRegionDrawable;
 
-    float backgroundX;
+    float backgroundX = 0;
+    float backgroundY = 0;
+
 
     float backgroundSpeed = 100;
 
@@ -36,9 +42,14 @@ public class GameScreen implements Screen {
         this.game = game;
     }
     public void create() {
+
         Gdx.app.log("GameScreen: ","gameScreen create");
         batch = new SpriteBatch();
-        this.background = new Texture("UI/Layer2.png");
+
+        this.background1 = new Texture("Backgrounds/01/Layer1.png");
+        this.background2 = new Texture("Backgrounds/01/Layer2.png");
+        terrain = new Texture("Terain/3.png");
+
 
         this.stage = new Stage();
 
@@ -61,11 +72,26 @@ public class GameScreen implements Screen {
         });
     }
 
+//    public void update(float f) {
+//        float dt =Gdx.graphics.getDeltaTime();
+//        this.backgroundX -= this.backgroundSpeed * dt;
+//        if (this.backgroundX < -this.background1.getWidth()) this.backgroundX += this.background1.getWidth() -20;
+//
+//    }
     public void update(float f) {
-        this.backgroundX -= this.backgroundSpeed * f;
-        if (this.backgroundX + this.background.getWidth() < 0) {
+
+        //Move background
+        this.backgroundX -= (this.backgroundSpeed/2) * f;
+
+        this.backgroundY -= (this.backgroundSpeed) *f;
+
+        if (this.backgroundX + this.background1.getWidth() < 0) {
             this.backgroundX = 0;
         }
+        if(this.backgroundY + this.background2.getWidth() < 0){
+            this.backgroundY = 0;
+        }
+
     }
 
 
@@ -75,8 +101,13 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        batch.draw(  this.background, this.backgroundX,0);
-        batch.draw(  this.background, this.backgroundX + this.background.getWidth(),0);
+
+        batch.draw(  this.background1, this.backgroundX,0);
+        batch.draw(  this.background1, this.backgroundX + this.background1.getWidth(),0);
+        batch.draw(  this.background2, this.backgroundY,0);
+        batch.draw(  this.background2, this.backgroundY + this.background2.getWidth(),0);
+
+        batch.draw(terrain, 0,0);
         batch.end();
 
         stage.act(Gdx.graphics.getDeltaTime());
@@ -85,8 +116,9 @@ public class GameScreen implements Screen {
     }
     @Override
     public void dispose() {
-        this.background.dispose();
+        this.background1.dispose();
         exitTexture.dispose();
+        terrain.dispose();
     }
     @Override
     public void resize(int width, int height) { }
