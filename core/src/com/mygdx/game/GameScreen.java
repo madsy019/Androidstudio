@@ -85,6 +85,8 @@ public class GameScreen implements Screen {
 
         this.backgroundY -= (this.backgroundSpeed) *f;
 
+
+
         if (this.backgroundX + this.background1.getWidth() < 0) {
             this.backgroundX = 0;
         }
@@ -106,8 +108,9 @@ public class GameScreen implements Screen {
         batch.draw(  this.background1, this.backgroundX + this.background1.getWidth(),0);
         batch.draw(  this.background2, this.backgroundY,0);
         batch.draw(  this.background2, this.backgroundY + this.background2.getWidth(),0);
-
         batch.draw(terrain, 0,0);
+        batch.draw(  this.terrain, this.backgroundY,0);
+        batch.draw(  this.terrain, this.backgroundY + this.terrain.getWidth(),0);
         batch.end();
 
         stage.act(Gdx.graphics.getDeltaTime());
