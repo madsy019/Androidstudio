@@ -30,11 +30,12 @@ public class GameScreen implements Screen {
     TextureRegion exitTextureRegion;
     TextureRegionDrawable exitTexRegionDrawable;
 
+    //Speeds for background
     float backgroundX = 0;
     float backgroundY = 0;
-
-
     float backgroundSpeed = 100;
+
+    Player player;
 
 
     // constructor to keep a reference to the main Game class
@@ -49,6 +50,8 @@ public class GameScreen implements Screen {
         this.background1 = new Texture("Backgrounds/01/Layer1.png");
         this.background2 = new Texture("Backgrounds/01/Layer2.png");
         terrain = new Texture("Terain/3.png");
+
+        this.player = new Player(this);
 
 
         this.stage = new Stage();
@@ -79,11 +82,12 @@ public class GameScreen implements Screen {
 //
 //    }
     public void update(float f) {
-
+        float dt = Gdx.graphics.getDeltaTime();
+        this.player.update();
         //Move background
-        this.backgroundX -= (this.backgroundSpeed/2) * f;
+        this.backgroundX -= (this.backgroundSpeed/2) * dt;
 
-        this.backgroundY -= (this.backgroundSpeed) *f;
+        this.backgroundY -= (this.backgroundSpeed) * dt;
 
 
 
@@ -111,6 +115,9 @@ public class GameScreen implements Screen {
         batch.draw(terrain, 0,0);
         batch.draw(  this.terrain, this.backgroundY,0);
         batch.draw(  this.terrain, this.backgroundY + this.terrain.getWidth(),0);
+
+        this.player.render(batch);
+
         batch.end();
 
         stage.act(Gdx.graphics.getDeltaTime());
@@ -122,6 +129,7 @@ public class GameScreen implements Screen {
         this.background1.dispose();
         exitTexture.dispose();
         terrain.dispose();
+        this.player.dispose();
     }
     @Override
     public void resize(int width, int height) { }
