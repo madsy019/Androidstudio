@@ -23,7 +23,7 @@ public class GameScreen implements Screen {
     Texture background1;
     Texture background2;
 
-    Texture terrain;
+
 
     ImageButton exitButton;
     Texture exitTexture;
@@ -33,7 +33,9 @@ public class GameScreen implements Screen {
     //Speeds for background
     float backgroundX = 0;
     float backgroundY = 0;
-    float backgroundSpeed = 100;
+
+    float backgroundZ = 0;
+    float backgroundSpeed = 200;
 
     Player player;
 
@@ -49,7 +51,7 @@ public class GameScreen implements Screen {
 
         this.background1 = new Texture("Backgrounds/01/Layer1.png");
         this.background2 = new Texture("Backgrounds/01/Layer2.png");
-        terrain = new Texture("Terain/3.png");
+
 
         this.player = new Player(this);
 
@@ -86,10 +88,11 @@ public class GameScreen implements Screen {
 
         this.player.update();
         //Move background
-        this.backgroundX -= (this.backgroundSpeed/2) * dt;
+        this.backgroundX -= (this.backgroundSpeed/3) * dt;
 
-        this.backgroundY -= (this.backgroundSpeed) * dt;
+        this.backgroundY -= (this.backgroundSpeed/2) * dt;
 
+        this.backgroundZ -= (this.backgroundSpeed) * dt;
 
 
         if (this.backgroundX + this.background1.getWidth() < 0) {
@@ -98,6 +101,7 @@ public class GameScreen implements Screen {
         if(this.backgroundY + this.background2.getWidth() < 0){
             this.backgroundY = 0;
         }
+
 
     }
 
@@ -113,9 +117,6 @@ public class GameScreen implements Screen {
         batch.draw(  this.background1, this.backgroundX + this.background1.getWidth(),0);
         batch.draw(  this.background2, this.backgroundY,0);
         batch.draw(  this.background2, this.backgroundY + this.background2.getWidth(),0);
-        batch.draw(terrain, 0,0);
-        batch.draw(  this.terrain, this.backgroundY,0);
-        batch.draw(  this.terrain, this.backgroundY + this.terrain.getWidth(),0);
 
         this.player.render(batch);
 
@@ -128,8 +129,9 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         this.background1.dispose();
+        this.background2.dispose();
         exitTexture.dispose();
-        terrain.dispose();
+
         this.player.dispose();
     }
     @Override
