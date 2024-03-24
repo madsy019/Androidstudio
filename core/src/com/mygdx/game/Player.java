@@ -18,28 +18,42 @@ public class Player {
 
     float gravity = 700;
 
+    float heightCorrection = 30;
+
+
+
 
     public Player(GameScreen game) {
+
         this.texture = new Texture("players/3/walk/0.png");
         this.terrian = new Texture("Terain/3.png");
     }
 
+
+
     public void update() {
+
         float dt = Gdx.graphics.getDeltaTime();
 
         this.ySpeed -= gravity * dt;
 
         this.y += ySpeed * dt;
-        if (this.y < 0) {
-            this.y = 0;
+        if (this.y < this.terrian.getHeight()) {
+
+            this.y = this.terrian.getHeight() - heightCorrection ;
         }
 
-        this.x += 100 * dt;
+        this.x = 150f;
+
+
+
     }
 
 
     public void render(Batch batch) {
-        batch.draw(this.texture, this.x , this.y + this.terrian.getHeight() );
+
+        batch.draw(this.texture, this.x , this.y);
+
     }
 
 
