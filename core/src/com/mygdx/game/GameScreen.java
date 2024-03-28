@@ -36,6 +36,9 @@ public class GameScreen implements Screen {
 
     float backgroundZ = 0;
     float backgroundSpeed = 200;
+    float ySpeed = 1000;
+
+    float gravity = 700;
 
     Player player;
 
@@ -49,8 +52,8 @@ public class GameScreen implements Screen {
         Gdx.app.log("GameScreen: ","gameScreen create");
         batch = new SpriteBatch();
 
-        this.background1 = new Texture("Backgrounds/01/Layer1.png");
-        this.background2 = new Texture("Backgrounds/01/Layer2.png");
+        this.background1 = new Texture("Backgrounds/01/Layer01.png");
+        this.background2 = new Texture("Backgrounds/01/Layer02.png");
 
 
         this.player = new Player(this);
@@ -100,6 +103,18 @@ public class GameScreen implements Screen {
         }
         if(this.backgroundY + this.background2.getWidth() < 0){
             this.backgroundY = 0;
+        }
+
+        if (Gdx.input.isTouched()) {
+
+            if( Gdx.input.getX() < Gdx.graphics.getWidth()/2){
+
+                this.player.jump();
+
+
+            }
+
+
         }
 
 

@@ -14,11 +14,11 @@ public class Player {
     float x = 0;
     float y = 0;
 
-    float ySpeed = 1000;
+    float ySpeed = 300;
 
-    float gravity = 700;
+    float gravity = 200;
 
-    float heightCorrection = 30;
+    float heightCorrection = 27;
      float terrainSpeed = 0;
      float backgroundSpeed = 200;
 
@@ -29,6 +29,8 @@ public class Player {
 
         this.texture = new Texture("players/3/walk/0.png");
         this.terrian = new Texture("Terain/3.png");
+
+        this.y = this.terrian.getHeight() - heightCorrection;
     }
 
 
@@ -47,16 +49,22 @@ public class Player {
 
         this.y += ySpeed * dt;
 
-        if (this.y < this.terrian.getHeight()) {
+        if (this.y < this.terrian.getHeight() - heightCorrection) {
 
             this.y = this.terrian.getHeight() - heightCorrection ;
+            this.ySpeed = 0;
         }
-        //fix value for the player to lank
+
+        //fix value for the player to land
         this.x = 150f;
 
+    }
 
+    public void jump() {
+        this.ySpeed = 300;
 
     }
+
 
 
     public void render(Batch batch) {
