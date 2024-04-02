@@ -138,6 +138,7 @@ public class MenuScreen implements Screen {
         batch.draw(mainbackground, 0, 0);//draw background
         batch.draw(title,500f , Gdx.graphics.getHeight()/2 -50f );
         batch.draw(terrain , 0,0);
+        batch.draw(terrain , 0 + this.terrain.getWidth(),0);
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
