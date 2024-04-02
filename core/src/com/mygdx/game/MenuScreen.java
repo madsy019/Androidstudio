@@ -5,6 +5,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,7 +17,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class MenuScreen implements Screen {
 
@@ -43,6 +46,10 @@ public class MenuScreen implements Screen {
     TextureRegion exitTextureRegion;
     TextureRegionDrawable exitTexRegionDrawable;
 
+//
+    OrthographicCamera camera;
+    Viewport viewport;
+//
 
 
     // constructor to keep a reference to the main Game class
@@ -55,6 +62,15 @@ public class MenuScreen implements Screen {
     public void create() {
 
         Gdx.app.log("MenuScreen: ","menuScreen create");
+
+        int screenWidth = Gdx.graphics.getWidth();
+        int screenHeight = Gdx.graphics.getHeight();
+
+        float screenRatio = 1000.0f / screenHeight;
+
+        this.camera = new OrthographicCamera();
+        this.camera.setToOrtho(false, screenWidth * screenRatio, screenHeight * screenRatio);
+        this.viewport = new FitViewport(screenWidth * screenRatio, screenHeight * screenRatio);
 
 
         batch = new SpriteBatch();
@@ -113,11 +129,15 @@ public class MenuScreen implements Screen {
 
     public void render(float f) {
 
+        this.camera.update();
+        batch.setProjectionMatrix(camera.combined);
         batch.begin();
+
+
         //Draw main background, title and terrain
         batch.draw(mainbackground, 0, 0);//draw background
         batch.draw(title,500f , Gdx.graphics.getHeight()/2 -50f );
-        batch.draw(terrain, 0,0);
+        batch.draw(terrain , 0,0);
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();

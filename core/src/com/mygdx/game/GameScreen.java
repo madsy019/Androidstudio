@@ -24,17 +24,15 @@ public class GameScreen implements Screen {
     Texture background2;
 
 
-
     ImageButton exitButton;
     Texture exitTexture;
     TextureRegion exitTextureRegion;
     TextureRegionDrawable exitTexRegionDrawable;
 
-    //Speeds for background
-    float backgroundX = 0;
-    float backgroundY = 0;
 
-    float backgroundZ = 0;
+    float xPosition = 0;
+    float yPosition = 0;
+
     float backgroundSpeed = 200;
     float ySpeed = 1000;
 
@@ -91,18 +89,16 @@ public class GameScreen implements Screen {
 
         this.player.update();
         //Move background
-        this.backgroundX -= (this.backgroundSpeed/3) * dt;
+        this.xPosition -= (this.backgroundSpeed/3) * dt;
 
-        this.backgroundY -= (this.backgroundSpeed/2) * dt;
-
-        this.backgroundZ -= (this.backgroundSpeed) * dt;
+        this.yPosition -= (this.backgroundSpeed/2) * dt;
 
 
-        if (this.backgroundX + this.background1.getWidth() < 0) {
-            this.backgroundX = 0;
+        if (this.xPosition + this.background1.getWidth() < 0) {
+            this.xPosition = 0;
         }
-        if(this.backgroundY + this.background2.getWidth() < 0){
-            this.backgroundY = 0;
+        if(this.yPosition + this.background2.getWidth() < 0){
+            this.yPosition = 0;
         }
 
         if (Gdx.input.isTouched()) {
@@ -128,10 +124,15 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
 
-        batch.draw(  this.background1, this.backgroundX,0);
-        batch.draw(  this.background1, this.backgroundX + this.background1.getWidth(),0);
-        batch.draw(  this.background2, this.backgroundY,0);
-        batch.draw(  this.background2, this.backgroundY + this.background2.getWidth(),0);
+        //get the screen width initially
+        int screenWidth = Gdx.graphics.getWidth();
+
+
+
+        batch.draw(  this.background1, this.xPosition,0);
+        batch.draw(  this.background1, this.xPosition + this.background1.getWidth(),0);
+        batch.draw(  this.background2, this.yPosition,0);
+        batch.draw(  this.background2, this.yPosition + this.background2.getWidth(),0);
 
         this.player.render(batch);
 

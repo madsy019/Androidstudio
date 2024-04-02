@@ -14,9 +14,9 @@ public class Player {
     float x = 0;
     float y = 0;
 
-    float ySpeed = 300;
+    float ySpeed = 600;
 
-    float gravity = 200;
+    float gravity = 300;
 
     float heightCorrection = 27;
      float terrainSpeed = 0;
