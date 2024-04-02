@@ -131,8 +131,10 @@ public class GameScreen implements Screen {
 
         batch.draw(  this.background1, this.xPosition,0);
         batch.draw(  this.background1, this.xPosition + this.background1.getWidth(),0);
+        batch.draw(  this.background1,( this.xPosition + this.background1.getWidth()) + + this.background1.getWidth(),0);
         batch.draw(  this.background2, this.yPosition,0);
         batch.draw(  this.background2, this.yPosition + this.background2.getWidth(),0);
+        batch.draw(  this.background2, (this.yPosition + this.background2.getWidth()) + this.background2.getWidth(),0);
 
         this.player.render(batch);
 

@@ -49,6 +49,8 @@ public class MenuScreen implements Screen {
 //
     OrthographicCamera camera;
     Viewport viewport;
+    int screenWidth = Gdx.graphics.getWidth();
+    int screenHeight = Gdx.graphics.getHeight();
 //
 
 
@@ -63,8 +65,7 @@ public class MenuScreen implements Screen {
 
         Gdx.app.log("MenuScreen: ","menuScreen create");
 
-        int screenWidth = Gdx.graphics.getWidth();
-        int screenHeight = Gdx.graphics.getHeight();
+
 
         float screenRatio = 1000.0f / screenHeight;
 
@@ -123,8 +124,6 @@ public class MenuScreen implements Screen {
             }
         });
 
-//
-
     }
 
     public void render(float f) {
@@ -136,7 +135,8 @@ public class MenuScreen implements Screen {
 
         //Draw main background, title and terrain
         batch.draw(mainbackground, 0, 0);//draw background
-        batch.draw(title,500f , Gdx.graphics.getHeight()/2 -50f );
+////////////Ask about drawing the title
+        batch.draw(title,0 +  (Gdx.graphics.getWidth()/2)/2  , 0 + (Gdx.graphics.getHeight()/2)/2 );
         batch.draw(terrain , 0,0);
         batch.draw(terrain , 0 + this.terrain.getWidth(),0);
 

@@ -72,7 +72,7 @@ public class Player {
         batch.draw(this.texture, this.x , this.y);
         batch.draw( this.terrian, this.terrainSpeed,0);
         batch.draw( this.terrian, this.terrainSpeed + this.terrian.getWidth(),0);
-
+        batch.draw( this.terrian, (this.terrainSpeed + this.terrian.getWidth()) + + this.terrian.getWidth(),0);
     }
 
 
