@@ -24,8 +24,6 @@ public class Player {
      float backgroundSpeed = 200;
 
 
-
-
     public Player(GameScreen game) {
 
         this.texture = new Texture("players/3/walk/0.png");

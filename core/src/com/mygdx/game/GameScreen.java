@@ -41,7 +41,7 @@ public class GameScreen implements Screen {
 
     Player player;
 
-    Enemy enemy;
+
 
 
     // constructor to keep a reference to the main Game class
@@ -58,7 +58,7 @@ public class GameScreen implements Screen {
 
 
         this.player = new Player(this);
-        this.enemy = new Enemy(this);
+
 
 
         this.stage = new Stage();
@@ -93,7 +93,7 @@ public class GameScreen implements Screen {
 
         this.player.update();
 
-        this.enemy.update();
+
         //Move background
         this.xPosition -= (this.backgroundSpeed/3) * dt;
 
@@ -143,7 +143,7 @@ public class GameScreen implements Screen {
         batch.draw(  this.background2, (this.yPosition + this.background2.getWidth()) + this.background2.getWidth(),0);
 
         this.player.render(batch);
-        this.enemy.render(batch);
+
 
 
         batch.end();
@@ -159,7 +159,7 @@ public class GameScreen implements Screen {
         exitTexture.dispose();
 
         this.player.dispose();
-        this.enemy.dispose();
+
     }
     @Override
     public void resize(int width, int height) { }

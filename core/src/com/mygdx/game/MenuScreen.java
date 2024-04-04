@@ -137,7 +137,7 @@ public class MenuScreen implements Screen {
         //Draw main background, title and terrain
         batch.draw(mainbackground, 0, 0);//draw background
 ////////////Ask about drawing the title
-        batch.draw(title,0 +  (Gdx.graphics.getWidth()/2)/2  , 0 + (Gdx.graphics.getHeight()/2)/2 );
+        batch.draw(title,0 + ((screenWidth/4) - title.getWidth()/4)+ 140, 0 + ((screenHeight/4) - title.getHeight()/4) + 200);
         batch.draw(terrain , 0,0);
         batch.draw(terrain , 0 + this.terrain.getWidth(),0);
 
