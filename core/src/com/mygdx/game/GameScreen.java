@@ -91,6 +91,7 @@ public class GameScreen implements Screen {
         float dt = Gdx.graphics.getDeltaTime();
 
         this.player.update();
+
         this.enemy.update();
         //Move background
         this.xPosition -= (this.backgroundSpeed/3) * dt;
