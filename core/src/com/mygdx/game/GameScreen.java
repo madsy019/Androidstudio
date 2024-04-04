@@ -3,10 +3,13 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -48,7 +51,11 @@ public class GameScreen implements Screen {
     Array<Bullets> bullets;
 
     private long lastFired;
-    private int shootDelay = 300;
+    private int shootDelay = 350;
+
+    ShapeRenderer shapeRenderer;
+
+    Enemy enemy;
 
     /*
     Bullets[] bullets = new Bullets[20];
@@ -83,6 +90,9 @@ public class GameScreen implements Screen {
         Gdx.app.log("GameScreen: ","gameScreen create");
         batch = new SpriteBatch();
 
+        this.shapeRenderer = new ShapeRenderer();
+
+
         this.background1 = new Texture("Backgrounds/01/Layer01.png");
 
         this.background2 = new Texture("Backgrounds/01/Layer02.png");
@@ -90,6 +100,12 @@ public class GameScreen implements Screen {
         this.terrian = new Texture("Terain/3.png");
 
         this.player = new Player(this);
+
+        int screenWidth = Gdx.graphics.getWidth();
+        int screenHeight = Gdx.graphics.getHeight();
+
+
+        this.enemy = new Enemy(this, new Vector2(screenWidth + 100, 0));
 
 
 
@@ -125,6 +141,8 @@ public class GameScreen implements Screen {
 
         this.player.update();
 
+        this.enemy.update();
+
         //Move background
         this.xPosition -= (this.backgroundSpeed/3) * dt;
 
@@ -144,23 +162,25 @@ public class GameScreen implements Screen {
             this.zPosition = 0;
         }
 
+        //Check to see if the screen is being touched
         if (Gdx.input.isTouched()) {
 
+            //Check to see if left half of the screen is touched.
+            //If yes then perform jump action on the player
             if( Gdx.input.getX() < Gdx.graphics.getWidth()/2) {
 
                     this.player.jump();
 
             }
 
-     ////////////////////shoots bullets
+            //shoots bullets
             if (System.currentTimeMillis() > lastFired + this.shootDelay) {
+                //Check to see if right half of the screen is touched
                 if (Gdx.input.getX() > Gdx.graphics.getWidth() / 2) {
-                    bullets.add(new Bullets((int)(this.player.x - 140 )  , this.player.y + 50 ));
+                    bullets.add(new Bullets((int)(this.player.x - 140 )  , this.player.y + 45 ));
                     this.lastFired = System.currentTimeMillis();
                 }
             }
-/////////////////////////////
-
 
         }
 
@@ -171,15 +191,6 @@ public class GameScreen implements Screen {
                 bullets.removeValue(bullet, true);
             }
         }
-
-
-
-
-//        //check if the bounding boxes are overlapping and then trigger a state
-//        if (this.player.getBoundingBox().contains(this.player.getBoundingBox())) {
-//            //trigger any state
-//        }
-
 
     }
 
@@ -206,14 +217,31 @@ public class GameScreen implements Screen {
         batch.draw( this.terrian, (this.zPosition + this.terrian.getWidth()) + + this.terrian.getWidth(),0);
 
 
-
+        //render the bullets on the screen from the array.
         for (Bullets bullet: bullets){
             bullet.render(batch);
         }
+        //Render player
+        this.player.render(this.batch);
 
-        this.player.render(batch);
+        this.enemy.render(this.batch);
 
         batch.end();
+
+        //Begin of shape renderer
+        this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+
+        this.shapeRenderer.setColor(Color.RED);
+
+        if (this.player.getBoundingBox() != null) {
+            this.shapeRenderer.rect(this.player.getBoundingBox().x, this.player.getBoundingBox().y,
+                    this.player.getBoundingBox().width, this.player.getBoundingBox().height);
+        }
+
+
+
+        this.shapeRenderer.end();
+
 
         stage.act(Gdx.graphics.getDeltaTime());
 

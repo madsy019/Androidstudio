@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 
 
-public class Player {
+public class Player implements CollidableObject{
 
 
     MyGdxGame game;
@@ -90,9 +90,10 @@ public class Player {
     }
 
     //creating player hit box
+    @Override
     public Rectangle getBoundingBox()
     {
-        return new Rectangle((this.x + 20),  (this.y + 20),65,90);
+        return new Rectangle(x + 30,y + 30,65,90);
     }
     public void dispose() {
         //this.texture.dispose();
