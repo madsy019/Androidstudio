@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class GameScreen implements Screen {
+    //
     MyGdxGame game; // Note it’s "MyGdxGame" not "Game"
 
     Stage stage;

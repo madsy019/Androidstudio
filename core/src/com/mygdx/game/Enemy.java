@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import java.util.Random;
 
 public class Enemy {
+    //
     MyGdxGame game;
 
     Texture texture;

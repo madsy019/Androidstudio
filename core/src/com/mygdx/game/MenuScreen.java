@@ -22,6 +22,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class MenuScreen implements Screen {
+    //
 
     MyGdxGame game; // Note it’s "MyGdxGame" not "Game"
 
