@@ -6,12 +6,15 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 
 public class Player {
 
+
     MyGdxGame game;
+
+    //Got the height from measuring the terrain
+    int terrainHeight = 111;
 
     Texture[] texture = new Texture[8];
     float frame = 0;
 
-    Texture terrian;
 
     float x = 0;
     float y = 0;
@@ -32,12 +35,8 @@ public class Player {
             this.texture[i] = new Texture("players/3/walk/" + i + ".png");
         }
 
-        this.terrian = new Texture("Terain/3.png");
-
-        this.y = this.terrian.getHeight() - heightCorrection;
+        this.y = + terrainHeight;
     }
-
-
 
     public void update() {
 
@@ -45,7 +44,7 @@ public class Player {
 
         this.terrainSpeed -= (this.backgroundSpeed) * dt;
 
-        if(this.terrainSpeed + this.terrian.getWidth() < 0){
+        if(this.terrainSpeed +terrainHeight  < 0){
             this.terrainSpeed = 0;
         }
 
@@ -53,9 +52,9 @@ public class Player {
 
         this.y += ySpeed * dt;
 
-        if (this.y < this.terrian.getHeight() - heightCorrection) {
+        if (this.y < terrainHeight) {
 
-            this.y = this.terrian.getHeight() - heightCorrection ;
+            this.y = terrainHeight;
             this.ySpeed = 0;
         }
 
@@ -72,12 +71,10 @@ public class Player {
 
     }
 
-    int maxJumpHeight = 800;
+
 
     public void jump() {
-        if(this.y <= maxJumpHeight){
-            this.ySpeed = 300;
-        }
+        this.ySpeed = 350;
 
     }
 
@@ -86,16 +83,13 @@ public class Player {
     public void render(Batch batch) {
 
         batch.draw(this.texture[(int)this.frame], this.x, this.y);
-        batch.draw( this.terrian, this.terrainSpeed,0);
-        batch.draw( this.terrian, this.terrainSpeed + this.terrian.getWidth(),0);
-        batch.draw( this.terrian, (this.terrainSpeed + this.terrian.getWidth()) + + this.terrian.getWidth(),0);
-    }
 
+    }
 
 
     public void dispose() {
         //this.texture.dispose();
-        this.terrian.dispose();
+
     }
 }
 

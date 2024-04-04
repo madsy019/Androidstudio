@@ -16,13 +16,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class GameScreen implements Screen {
 
     MyGdxGame game; // Note it’s "MyGdxGame" not "Game"
-
     Stage stage;
     SpriteBatch batch;
 
     //Textures for backgrounds and terrain
     Texture background1;
     Texture background2;
+
+    Texture terrian;
 
 
     ImageButton exitButton;
@@ -33,6 +34,8 @@ public class GameScreen implements Screen {
 
     float xPosition = 0;
     float yPosition = 0;
+
+    float zPosition = 0;
 
     float backgroundSpeed = 200;
     float ySpeed = 1000;
@@ -54,8 +57,10 @@ public class GameScreen implements Screen {
         batch = new SpriteBatch();
 
         this.background1 = new Texture("Backgrounds/01/Layer01.png");
+
         this.background2 = new Texture("Backgrounds/01/Layer02.png");
 
+        this.terrian = new Texture("Terain/3.png");
 
         this.player = new Player(this);
 
@@ -94,10 +99,13 @@ public class GameScreen implements Screen {
         this.player.update();
 
 
+
         //Move background
         this.xPosition -= (this.backgroundSpeed/3) * dt;
 
         this.yPosition -= (this.backgroundSpeed/2) * dt;
+
+        this.zPosition -= (this.backgroundSpeed) * dt;
 
 
         if (this.xPosition + this.background1.getWidth() < 0) {
@@ -107,21 +115,22 @@ public class GameScreen implements Screen {
             this.yPosition = 0;
         }
 
+        if(this.zPosition + this.terrian.getWidth() < 0){
+            this.zPosition = 0;
+        }
+
         if (Gdx.input.isTouched()) {
 
-            if( Gdx.input.getX() < Gdx.graphics.getWidth()/2){
+            if( Gdx.input.getX() < Gdx.graphics.getWidth()/2) {
 
-                this.player.jump();
-
+                    this.player.jump();
 
             }
 
 
         }
 
-
     }
-
 
     public void render(float f) {
         this.update(f);
@@ -141,6 +150,10 @@ public class GameScreen implements Screen {
         batch.draw(  this.background2, this.yPosition,0);
         batch.draw(  this.background2, this.yPosition + this.background2.getWidth(),0);
         batch.draw(  this.background2, (this.yPosition + this.background2.getWidth()) + this.background2.getWidth(),0);
+        batch.draw( this.terrian, this.zPosition,0);
+        batch.draw( this.terrian, this.zPosition + this.terrian.getWidth(),0);
+        batch.draw( this.terrian, (this.zPosition + this.terrian.getWidth()) + + this.terrian.getWidth(),0);
+
 
         this.player.render(batch);
 
@@ -156,6 +169,7 @@ public class GameScreen implements Screen {
     public void dispose() {
         this.background1.dispose();
         this.background2.dispose();
+        this.terrian.dispose();
         exitTexture.dispose();
 
         this.player.dispose();
