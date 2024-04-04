@@ -12,6 +12,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Array;
+
+import java.util.ArrayList;
 
 public class GameScreen implements Screen {
 
@@ -38,18 +41,42 @@ public class GameScreen implements Screen {
     float zPosition = 0;
 
     float backgroundSpeed = 200;
-    float ySpeed = 1000;
 
-    float gravity = 700;
 
     Player player;
+
+    Array<Bullets> bullets;
+
+    private long lastFired;
+    private int shootDelay = 300;
+
+    /*
+    Bullets[] bullets = new Bullets[20];
+
+    for (int i = 0; i < bullets.size; i++) {
+      if (bullets[i] == null || bullets[i].isDead()) {
+        bullets[i] = new Bullets();
+        break;
+      }
+    }
+
+    for (int i = 0; i < bullets.size; i++) {
+      if (bullets[i] != null || !bullets[i].isDead()) {
+        bullets[i].update();
+      }
+    }
+
+     */
 
 
 
 
     // constructor to keep a reference to the main Game class
     public GameScreen(MyGdxGame game) {
+
         this.game = game;
+
+        bullets = new Array<Bullets>();
     }
     public void create() {
 
@@ -98,8 +125,6 @@ public class GameScreen implements Screen {
 
         this.player.update();
 
-
-
         //Move background
         this.xPosition -= (this.backgroundSpeed/3) * dt;
 
@@ -127,20 +152,42 @@ public class GameScreen implements Screen {
 
             }
 
+     ////////////////////shoots bullets
+            if (System.currentTimeMillis() > lastFired + this.shootDelay) {
+                if (Gdx.input.getX() > Gdx.graphics.getWidth() / 2) {
+                    bullets.add(new Bullets((int)(this.player.x - 140 )  , this.player.y + 50 ));
+                    this.lastFired = System.currentTimeMillis();
+                }
+            }
+/////////////////////////////
+
 
         }
 
-        //check if the bounding boxes are overlapping and then trigger a state
-        if (this.player.getBoundingBox().contains(this.player.getBoundingBox())) {
-            //trigger any state
+        //update bullets
+        for (Bullets bullet : bullets){
+            bullet.update();
+            if (!bullet.isAlive()) {
+                bullets.removeValue(bullet, true);
+            }
         }
+
+
+
+
+//        //check if the bounding boxes are overlapping and then trigger a state
+//        if (this.player.getBoundingBox().contains(this.player.getBoundingBox())) {
+//            //trigger any state
+//        }
 
 
     }
 
     public void render(float f) {
         this.update(f);
-
+        Gdx.app.log("GameScreen: ","gameScreen render");
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
 
         //get the screen width initially
@@ -159,9 +206,12 @@ public class GameScreen implements Screen {
         batch.draw( this.terrian, (this.zPosition + this.terrian.getWidth()) + + this.terrian.getWidth(),0);
 
 
+
+        for (Bullets bullet: bullets){
+            bullet.render(batch);
+        }
+
         this.player.render(batch);
-
-
 
         batch.end();
 

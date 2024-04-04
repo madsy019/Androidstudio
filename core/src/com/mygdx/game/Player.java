@@ -3,8 +3,8 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Rectangle;
 
-import java.awt.Rectangle;
 
 public class Player {
 
@@ -26,8 +26,8 @@ public class Player {
     float gravity = 300;
 
     float heightCorrection = 27;
-     float terrainSpeed = 0;
-     float backgroundSpeed = 200;
+
+    float backgroundSpeed = 200;
 
 
     public Player(GameScreen game) {
@@ -44,21 +44,23 @@ public class Player {
 
         float dt = Gdx.graphics.getDeltaTime();
 
-        this.terrainSpeed -= (this.backgroundSpeed) * dt;
-
-        if(this.terrainSpeed +terrainHeight  < 0){
-            this.terrainSpeed = 0;
-        }
-
         this.ySpeed -= gravity * dt;
 
         this.y += ySpeed * dt;
 
-        if (this.y < terrainHeight) {
 
+        //landing the player on top of the terrain
+        if (this.y < terrainHeight) {
             this.y = terrainHeight;
             this.ySpeed = 0;
         }
+
+        //landing the player on top of the terrain
+        if (this.y > Gdx.graphics.getHeight() - 200) {
+            this.y = Gdx.graphics.getHeight() - 200;
+            this.ySpeed = 0;
+        }
+
 
         //fix value for the player to land
         this.x = 150f;
@@ -81,7 +83,6 @@ public class Player {
     }
 
 
-
     public void render(Batch batch) {
 
         batch.draw(this.texture[(int)this.frame], this.x, this.y);
@@ -91,7 +92,7 @@ public class Player {
     //creating player hit box
     public Rectangle getBoundingBox()
     {
-        return new Rectangle((int) (this.x + 20), (int) (this.y + 20),65,90);
+        return new Rectangle((this.x + 20),  (this.y + 20),65,90);
     }
     public void dispose() {
         //this.texture.dispose();
