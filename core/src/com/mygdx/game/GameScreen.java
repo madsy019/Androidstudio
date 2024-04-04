@@ -130,13 +130,17 @@ public class GameScreen implements Screen {
 
         }
 
+        //check if the bounding boxes are overlapping and then trigger a state
+        if (this.player.getBoundingBox().contains(this.player.getBoundingBox())) {
+            //trigger any state
+        }
+
+
     }
 
     public void render(float f) {
         this.update(f);
-        Gdx.app.log("GameScreen: ","gameScreen render");
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         batch.begin();
 
         //get the screen width initially
@@ -162,16 +166,17 @@ public class GameScreen implements Screen {
         batch.end();
 
         stage.act(Gdx.graphics.getDeltaTime());
+
         stage.draw();
 
     }
     @Override
     public void dispose() {
+
         this.background1.dispose();
         this.background2.dispose();
         this.terrian.dispose();
         exitTexture.dispose();
-
         this.player.dispose();
 
     }

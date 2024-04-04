@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
+import java.awt.Rectangle;
+
 public class Player {
 
 
@@ -86,7 +88,11 @@ public class Player {
 
     }
 
-
+    //creating player hit box
+    public Rectangle getBoundingBox()
+    {
+        return new Rectangle((int) (this.x + 20), (int) (this.y + 20),65,90);
+    }
     public void dispose() {
         //this.texture.dispose();
 
