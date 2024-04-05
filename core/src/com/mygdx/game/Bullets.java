@@ -36,6 +36,7 @@ public class Bullets implements CollidableObject {
     }
 
     public void render(Batch batch) {
+
         batch.draw(texture, xPosition, yPosition);
     }
 

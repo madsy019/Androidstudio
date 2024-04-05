@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -24,6 +25,10 @@ public class GameScreen implements Screen {
     MyGdxGame game; // Note it’s "MyGdxGame" not "Game"
     Stage stage;
     SpriteBatch batch;
+
+    int terrainHeight = 111;
+    float minY = terrainHeight;
+    float maxY =  Gdx.graphics.getHeight() - 400;
 
     //Textures for backgrounds and terrain
     Texture background1;
@@ -50,12 +55,18 @@ public class GameScreen implements Screen {
 
     Array<Bullets> bullets;
 
+    Array<Enemy> enemyArr;
+
+    private long lastAppear;
+
+
+    private int enemyDelay = 200;
+
     private long lastFired;
-    private int shootDelay = 350;
+    private int shootDelay = 450;
 
     ShapeRenderer shapeRenderer;
 
-    Enemy enemy;
 
     /*
     Bullets[] bullets = new Bullets[20];
@@ -84,18 +95,26 @@ public class GameScreen implements Screen {
         this.game = game;
 
         bullets = new Array<Bullets>();
+
+        enemyArr = new Array<Enemy>();
     }
     public void create() {
 
-        Gdx.app.log("GameScreen: ","gameScreen create");
+        Gdx.app.log("GameScreen: ", "gameScreen create");
         batch = new SpriteBatch();
 
         this.shapeRenderer = new ShapeRenderer();
 
+        int randomBackground = 2;
+        int minValue = 1;
+        int maxValue = 4;
+        randomBackground = MathUtils.random(minValue, maxValue);
 
-        this.background1 = new Texture("Backgrounds/01/Layer01.png");
 
-        this.background2 = new Texture("Backgrounds/01/Layer02.png");
+
+        this.background1 = new Texture("Backgrounds/" +"0"+ randomBackground + "/Layer01.png");
+
+        this.background2 = new Texture("Backgrounds/" +"0"+ randomBackground + "/Layer02.png");
 
         this.terrian = new Texture("Terain/3.png");
 
@@ -105,8 +124,7 @@ public class GameScreen implements Screen {
         int screenHeight = Gdx.graphics.getHeight();
 
 
-        this.enemy = new Enemy(this, new Vector2(screenWidth + 100, 0));
-
+//        this.enemy = new Enemy(this, new Vector2(screenWidth + 100, 0));
 
 
         this.stage = new Stage();
@@ -117,14 +135,12 @@ public class GameScreen implements Screen {
         exitTexRegionDrawable = new TextureRegionDrawable(exitTextureRegion);
         exitButton = new ImageButton(exitTexRegionDrawable); //Set the button up
 
-        exitButton.setPosition(Gdx.graphics.getWidth() /2 - (exitButton.getWidth()/2) -100f, Gdx.graphics.getHeight()- 100f );
+        exitButton.setPosition(Gdx.graphics.getWidth() / 2 - (exitButton.getWidth() / 2) - 100f, Gdx.graphics.getHeight() - 100f);
         stage.addActor(exitButton);
         Gdx.input.setInputProcessor(stage);
-        exitButton.addListener(new ClickListener()
-        {
+        exitButton.addListener(new ClickListener() {
             @Override
-            public void clicked (InputEvent event, float x, float y)
-            {
+            public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(MyGdxGame.menuScreen);
             }
         });
@@ -135,11 +151,11 @@ public class GameScreen implements Screen {
 
         this.player.update();
 
-        this.enemy.update();
-
-        if (this.player.getBoundingBox().overlaps(this.enemy.getBoundingBox())) {
-            this.enemy.handleCollision();
-        }
+//        this.enemy.update();
+//
+//        if (this.player.getBoundingBox().overlaps(this.enemy.getBoundingBox())) {
+//            this.enemy.handleCollision();
+//        }
 
 
         //Move background
@@ -166,9 +182,9 @@ public class GameScreen implements Screen {
 
             //Check to see if left half of the screen is touched.
             //If yes then perform jump action on the player
-            if( Gdx.input.getX() < Gdx.graphics.getWidth()/2) {
+            if (Gdx.input.getX() < Gdx.graphics.getWidth() / 2) {
 
-                    this.player.jump();
+                this.player.jump();
 
             }
 
@@ -176,23 +192,47 @@ public class GameScreen implements Screen {
             if (System.currentTimeMillis() > lastFired + this.shootDelay) {
                 //Check to see if right half of the screen is touched
                 if (Gdx.input.getX() > Gdx.graphics.getWidth() / 2) {
-                    bullets.add(new Bullets((int)(this.player.x - 140 )  , this.player.y + 45 ));
+                    bullets.add(new Bullets((int) (this.player.x - 140), this.player.y + 45));
                     this.lastFired = System.currentTimeMillis();
                 }
             }
+        }
 
+
+            //generate enemies
+            if(System.currentTimeMillis() > lastAppear + this.enemyDelay){
+                float randomEnemyDelay = MathUtils.random(1500, 2000);
+                enemyDelay = (int) randomEnemyDelay;
+                float randomY = MathUtils.random(minY, maxY);
+                enemyArr.add(new Enemy(this, new Vector2(Gdx.graphics.getWidth() + 300, randomY)));
+                this.lastAppear = System.currentTimeMillis();
+            }
+
+        for (Enemy enemy: enemyArr) {
+            enemy.update();
+
+            if (!enemy.isAlive()) {
+                enemyArr.removeValue(enemy, true);
+            }
+
+            if (this.player.getBoundingBox().overlaps(enemy.getBoundingBox())) {
+                enemy.handleCollision();
+            }
         }
 
         //update bullets
         for (Bullets bullet : bullets){
             bullet.update();
 
-            if (bullet.getBoundingBox().overlaps(this.enemy.getBoundingBox())) {
-                this.enemy.handleCollision();
-            }
-
             if (!bullet.isAlive()) {
                 bullets.removeValue(bullet, true);
+            }
+
+            //check for bullets
+            for (Enemy enemy: enemyArr){
+                if (bullet.getBoundingBox().overlaps(enemy.getBoundingBox())) {
+                    enemy.handleCollision();
+                }
             }
         }
 
@@ -200,7 +240,7 @@ public class GameScreen implements Screen {
 
     public void render(float f) {
         this.update(f);
-        Gdx.app.log("GameScreen: ","gameScreen render");
+        Gdx.app.log("GameScreen: ", "gameScreen render");
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
@@ -209,60 +249,64 @@ public class GameScreen implements Screen {
         int screenWidth = Gdx.graphics.getWidth();
 
 
-
-        batch.draw(  this.background1, this.xPosition,0);
-        batch.draw(  this.background1, this.xPosition + this.background1.getWidth(),0);
-        batch.draw(  this.background1,( this.xPosition + this.background1.getWidth()) + + this.background1.getWidth(),0);
-        batch.draw(  this.background2, this.yPosition,0);
-        batch.draw(  this.background2, this.yPosition + this.background2.getWidth(),0);
-        batch.draw(  this.background2, (this.yPosition + this.background2.getWidth()) + this.background2.getWidth(),0);
-        batch.draw( this.terrian, this.zPosition,0);
-        batch.draw( this.terrian, this.zPosition + this.terrian.getWidth(),0);
-        batch.draw( this.terrian, (this.zPosition + this.terrian.getWidth()) + + this.terrian.getWidth(),0);
+        batch.draw(this.background1, this.xPosition, 0);
+        batch.draw(this.background1, this.xPosition + this.background1.getWidth(), 0);
+        batch.draw(this.background1, (this.xPosition + this.background1.getWidth()) + +this.background1.getWidth(), 0);
+        batch.draw(this.background2, this.yPosition, 0);
+        batch.draw(this.background2, this.yPosition + this.background2.getWidth(), 0);
+        batch.draw(this.background2, (this.yPosition + this.background2.getWidth()) + this.background2.getWidth(), 0);
+        batch.draw(this.terrian, this.zPosition, 0);
+        batch.draw(this.terrian, this.zPosition + this.terrian.getWidth(), 0);
+        batch.draw(this.terrian, (this.zPosition + this.terrian.getWidth()) + +this.terrian.getWidth(), 0);
 
 
         //render the bullets on the screen from the array.
-        for (Bullets bullet: bullets){
+        for (Bullets bullet : bullets) {
             bullet.render(batch);
         }
-        //Render player
-        this.player.render(this.batch);
 
-        this.enemy.render(this.batch);
-
-        batch.end();
-
-        //Begin of shape renderer
-        this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-
-        this.shapeRenderer.setColor(Color.RED);
-
-        if (this.player.getBoundingBox() != null) {
-            this.shapeRenderer.rect(this.player.getBoundingBox().x, this.player.getBoundingBox().y,
-                    this.player.getBoundingBox().width, this.player.getBoundingBox().height);
+        for (Enemy enemy : enemyArr) {
+            enemy.render(batch);
+            //Render player
+            this.player.render(this.batch);
+//
+//            this.enemy.render(this.batch);
         }
+            batch.end();
 
-        if (this.enemy.getBoundingBox() != null) {
-            this.shapeRenderer.rect(this.enemy.getBoundingBox().x, this.enemy.getBoundingBox().y,
-                    this.enemy.getBoundingBox().width, this.enemy.getBoundingBox().height);
-        }
+            //Begin of shape renderer
+//            this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//
+//            this.shapeRenderer.setColor(Color.RED);
+//
+//            if (this.player.getBoundingBox() != null) {
+//                this.shapeRenderer.rect(this.player.getBoundingBox().x, this.player.getBoundingBox().y,
+//                        this.player.getBoundingBox().width, this.player.getBoundingBox().height);
+//            }
+//
+//            for (Enemy currentEnemy : this.enemyArr) {
+//
+//                if (currentEnemy.getBoundingBox() != null) {
+//                    this.shapeRenderer.rect(currentEnemy.getBoundingBox().x, currentEnemy.getBoundingBox().y,
+//                            currentEnemy.getBoundingBox().width, currentEnemy.getBoundingBox().height);
+//                }
+//            }
+//
+//            for (Bullets bullet : bullets) {
+//                if (bullet.getBoundingBox() != null) {
+//                    this.shapeRenderer.rect(bullet.getBoundingBox().x, bullet.getBoundingBox().y,
+//                            bullet.getBoundingBox().width, bullet.getBoundingBox().height);
+//                }
+//
+//            }
+//
+//
+//            this.shapeRenderer.end();
 
-        for (Bullets bullet: bullets){
-            if (bullet.getBoundingBox() != null) {
-                this.shapeRenderer.rect(bullet.getBoundingBox().x, bullet.getBoundingBox().y,
-                        bullet.getBoundingBox().width, bullet.getBoundingBox().height);
-            }
 
-        }
+            stage.act(Gdx.graphics.getDeltaTime());
 
-
-
-        this.shapeRenderer.end();
-
-
-        stage.act(Gdx.graphics.getDeltaTime());
-
-        stage.draw();
+            stage.draw();
 
     }
     @Override

@@ -1,5 +1,5 @@
 package com.mygdx.game;
-
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,6 +9,9 @@ import com.badlogic.gdx.math.Vector2;
 public class Enemy implements CollidableObject{
 
     private GameScreen game;
+    boolean isAlive = true;
+
+
 
     int terrainHeight = 111;
 
@@ -35,9 +38,9 @@ public class Enemy implements CollidableObject{
         this.position = position;
 
         //create texture and animation for the enemy
-        this.texture = new Texture[8];
-        for (int i = 0 ; i < 8; i++) {
-            this.texture[i] = new Texture("enemies/2/" + i + ".png");
+        this.texture = new Texture[4];
+        for (int i = 0 ; i < 4; i++) {
+            this.texture[i] = new Texture("enemies/4/" + i + ".png");
 
         }
 
@@ -57,13 +60,17 @@ public class Enemy implements CollidableObject{
 
         this.position.add(new Vector2(this.speed * dt, 0));
 
+        //destroy the enemy when it goes oof the screen
+        if  (this.position.x < 0) {
+            this.enemyState = State.DEAD;
+        }
 
         //update the Enemy movement frame rate
         int walkingSpeed = 15;
 
         if (this.enemyState == State.ALIVE){
             this.frame += walkingSpeed * dt;
-            if (this.frame >= 8) {
+            if (this.frame >= 4) {
                 this.frame = 0;
             }
         }
@@ -101,6 +108,13 @@ public class Enemy implements CollidableObject{
             this.enemyState = State.DYING;
             this.frame = 0;
         }
+    }
+
+    public boolean isAlive() {
+        if (this.enemyState == State.DEAD) {
+            return false;
+        }
+        return true;
     }
 
 }

@@ -55,7 +55,7 @@ public class Player implements CollidableObject{
             this.ySpeed = 0;
         }
 
-        //landing the player on top of the terrain
+        //Stop the player at the top of the screen
         if (this.y > Gdx.graphics.getHeight() - 200) {
             this.y = Gdx.graphics.getHeight() - 200;
             this.ySpeed = 0;
