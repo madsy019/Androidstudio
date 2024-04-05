@@ -57,6 +57,7 @@ public class MenuScreen implements Screen {
 
     // constructor to keep a reference to the main Game class
     public MenuScreen(MyGdxGame game) {
+
         this.game = game;
     }
 
@@ -101,6 +102,8 @@ public class MenuScreen implements Screen {
             @Override
             public void clicked (InputEvent event, float x, float y)
             {
+                //reset the game everytime I select to come back to the main menu
+                game.create();
                 game.setScreen(MyGdxGame.gameScreen);
             }
         });

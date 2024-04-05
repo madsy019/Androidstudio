@@ -60,8 +60,8 @@ public class Enemy implements CollidableObject{
 
         this.position.add(new Vector2(this.speed * dt, 0));
 
-        //destroy the enemy when it goes oof the screen
-        if  (this.position.x < 0) {
+        //destroy the enemy when it goes off the screen
+        if  (this.position.x < - 300) {
             this.enemyState = State.DEAD;
         }
 

@@ -27,7 +27,7 @@ public class GameScreen implements Screen {
     SpriteBatch batch;
 
     int terrainHeight = 111;
-    float minY = terrainHeight;
+    float minY = 0;
     float maxY =  Gdx.graphics.getHeight() - 400;
 
     //Textures for backgrounds and terrain
@@ -64,6 +64,9 @@ public class GameScreen implements Screen {
 
     private long lastFired;
     private int shootDelay = 450;
+
+    //get the screen width initially
+    int screenWidth = Gdx.graphics.getWidth();
 
     ShapeRenderer shapeRenderer;
 
@@ -151,12 +154,6 @@ public class GameScreen implements Screen {
 
         this.player.update();
 
-//        this.enemy.update();
-//
-//        if (this.player.getBoundingBox().overlaps(this.enemy.getBoundingBox())) {
-//            this.enemy.handleCollision();
-//        }
-
 
         //Move background
         this.xPosition -= (this.backgroundSpeed/3) * dt;
@@ -243,10 +240,8 @@ public class GameScreen implements Screen {
         Gdx.app.log("GameScreen: ", "gameScreen render");
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.begin();
 
-        //get the screen width initially
-        int screenWidth = Gdx.graphics.getWidth();
+        batch.begin();
 
 
         batch.draw(this.background1, this.xPosition, 0);
@@ -267,6 +262,7 @@ public class GameScreen implements Screen {
 
         for (Enemy enemy : enemyArr) {
             enemy.render(batch);
+
             //Render player
             this.player.render(this.batch);
 //
@@ -275,33 +271,33 @@ public class GameScreen implements Screen {
             batch.end();
 
             //Begin of shape renderer
-//            this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-//
-//            this.shapeRenderer.setColor(Color.RED);
-//
-//            if (this.player.getBoundingBox() != null) {
-//                this.shapeRenderer.rect(this.player.getBoundingBox().x, this.player.getBoundingBox().y,
-//                        this.player.getBoundingBox().width, this.player.getBoundingBox().height);
-//            }
-//
-//            for (Enemy currentEnemy : this.enemyArr) {
-//
-//                if (currentEnemy.getBoundingBox() != null) {
-//                    this.shapeRenderer.rect(currentEnemy.getBoundingBox().x, currentEnemy.getBoundingBox().y,
-//                            currentEnemy.getBoundingBox().width, currentEnemy.getBoundingBox().height);
-//                }
-//            }
-//
-//            for (Bullets bullet : bullets) {
-//                if (bullet.getBoundingBox() != null) {
-//                    this.shapeRenderer.rect(bullet.getBoundingBox().x, bullet.getBoundingBox().y,
-//                            bullet.getBoundingBox().width, bullet.getBoundingBox().height);
-//                }
-//
-//            }
-//
-//
-//            this.shapeRenderer.end();
+            this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+
+            this.shapeRenderer.setColor(Color.RED);
+
+            if (this.player.getBoundingBox() != null) {
+                this.shapeRenderer.rect(this.player.getBoundingBox().x, this.player.getBoundingBox().y,
+                        this.player.getBoundingBox().width, this.player.getBoundingBox().height);
+            }
+
+            for (Enemy currentEnemy : this.enemyArr) {
+
+                if (currentEnemy.getBoundingBox() != null) {
+                    this.shapeRenderer.rect(currentEnemy.getBoundingBox().x, currentEnemy.getBoundingBox().y,
+                            currentEnemy.getBoundingBox().width, currentEnemy.getBoundingBox().height);
+                }
+            }
+
+            for (Bullets bullet : bullets) {
+                if (bullet.getBoundingBox() != null) {
+                    this.shapeRenderer.rect(bullet.getBoundingBox().x, bullet.getBoundingBox().y,
+                            bullet.getBoundingBox().width, bullet.getBoundingBox().height);
+                }
+
+            }
+
+
+            this.shapeRenderer.end();
 
 
             stage.act(Gdx.graphics.getDeltaTime());
@@ -317,6 +313,8 @@ public class GameScreen implements Screen {
         this.terrian.dispose();
         exitTexture.dispose();
         this.player.dispose();
+
+
 
     }
     @Override
