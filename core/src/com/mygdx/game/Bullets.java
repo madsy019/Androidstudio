@@ -2,8 +2,9 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Rectangle;
 
-public class Bullets {
+public class Bullets implements CollidableObject {
     private int speed = 800;
 
     Texture texture;
@@ -40,6 +41,16 @@ public class Bullets {
 
     public void dispose() {
         this.texture.dispose();
+
+    }
+    @Override
+    public Rectangle getBoundingBox()
+    {
+        return new Rectangle(this.xPosition + 250,this.yPosition + 5  ,50,40);
+    }
+
+    @Override
+    public void handleCollision() {
 
     }
 

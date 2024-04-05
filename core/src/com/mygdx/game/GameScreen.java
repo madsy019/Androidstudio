@@ -141,6 +141,7 @@ public class GameScreen implements Screen {
             this.enemy.handleCollision();
         }
 
+
         //Move background
         this.xPosition -= (this.backgroundSpeed/3) * dt;
 
@@ -185,6 +186,11 @@ public class GameScreen implements Screen {
         //update bullets
         for (Bullets bullet : bullets){
             bullet.update();
+
+            if (bullet.getBoundingBox().overlaps(this.enemy.getBoundingBox())) {
+                this.enemy.handleCollision();
+            }
+
             if (!bullet.isAlive()) {
                 bullets.removeValue(bullet, true);
             }
@@ -226,23 +232,32 @@ public class GameScreen implements Screen {
 
         batch.end();
 
-//        //Begin of shape renderer
-//        this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-//
-//        this.shapeRenderer.setColor(Color.RED);
-//
-//        if (this.player.getBoundingBox() != null) {
-//            this.shapeRenderer.rect(this.player.getBoundingBox().x, this.player.getBoundingBox().y,
-//                    this.player.getBoundingBox().width, this.player.getBoundingBox().height);
-//        }
-//
-//        if (this.enemy.getBoundingBox() != null) {
-//            this.shapeRenderer.rect(this.enemy.getBoundingBox().x, this.enemy.getBoundingBox().y,
-//                    this.enemy.getBoundingBox().width, this.enemy.getBoundingBox().height);
-//        }
-//
-//
-//        this.shapeRenderer.end();
+        //Begin of shape renderer
+        this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+
+        this.shapeRenderer.setColor(Color.RED);
+
+        if (this.player.getBoundingBox() != null) {
+            this.shapeRenderer.rect(this.player.getBoundingBox().x, this.player.getBoundingBox().y,
+                    this.player.getBoundingBox().width, this.player.getBoundingBox().height);
+        }
+
+        if (this.enemy.getBoundingBox() != null) {
+            this.shapeRenderer.rect(this.enemy.getBoundingBox().x, this.enemy.getBoundingBox().y,
+                    this.enemy.getBoundingBox().width, this.enemy.getBoundingBox().height);
+        }
+
+        for (Bullets bullet: bullets){
+            if (bullet.getBoundingBox() != null) {
+                this.shapeRenderer.rect(bullet.getBoundingBox().x, bullet.getBoundingBox().y,
+                        bullet.getBoundingBox().width, bullet.getBoundingBox().height);
+            }
+
+        }
+
+
+
+        this.shapeRenderer.end();
 
 
         stage.act(Gdx.graphics.getDeltaTime());
