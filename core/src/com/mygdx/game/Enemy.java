@@ -11,8 +11,6 @@ public class Enemy implements CollidableObject{
     private GameScreen game;
     boolean isAlive = true;
 
-
-
     int terrainHeight = 111;
 
     private Texture[] texture;
@@ -28,7 +26,7 @@ public class Enemy implements CollidableObject{
     //enemy states created
     enum State {ALIVE, DYING, DEAD}
 
-    private State enemyState;
+   private State enemyState;
 
 
     public Enemy(GameScreen game, Vector2 position) {

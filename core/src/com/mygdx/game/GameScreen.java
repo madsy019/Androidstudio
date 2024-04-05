@@ -212,9 +212,12 @@ public class GameScreen implements Screen {
                 enemyArr.removeValue(enemy, true);
             }
 
+            //handling collision of both enemy and player if they knock
             if (this.player.getBoundingBox().overlaps(enemy.getBoundingBox())) {
                 enemy.handleCollision();
+                player.handleCollision();
             }
+
         }
 
         //update bullets
@@ -230,8 +233,12 @@ public class GameScreen implements Screen {
                 if (bullet.getBoundingBox().overlaps(enemy.getBoundingBox())) {
                     enemy.handleCollision();
                 }
+
             }
         }
+
+
+
 
     }
 
@@ -265,9 +272,9 @@ public class GameScreen implements Screen {
 
             //Render player
             this.player.render(this.batch);
-//
-//            this.enemy.render(this.batch);
+
         }
+
             batch.end();
 
             //Begin of shape renderer
@@ -317,6 +324,8 @@ public class GameScreen implements Screen {
 
 
     }
+
+
     @Override
     public void resize(int width, int height) { }
     @Override

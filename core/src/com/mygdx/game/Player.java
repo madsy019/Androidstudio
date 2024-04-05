@@ -10,12 +10,19 @@ public class Player implements CollidableObject{
 
 
     MyGdxGame game;
+    float dyinRate;
+
+    enum State {ALIVE, DYING, DEAD}
+    private State playerState;
+
 
     //Got the height from measuring the terrain
     int terrainHeight = 111;
 
     Texture[] texture = new Texture[8];
     Texture[] smoke = new Texture[4];
+    Texture[] dying = new Texture[4];
+
 
     float frame = 0;
 
@@ -45,6 +52,14 @@ public class Player implements CollidableObject{
             this.smoke[i] = new Texture("players/smoke/" + i + ".png");
         }
 
+        // Texture for smoke
+        for (int i = 0 ; i < 4; i++) {
+            this.dying[i] = new Texture("players/3/die/" + i + ".png");
+        }
+
+        //Assign enemy state as alive
+        this.playerState = State.ALIVE;
+
         this.y = + terrainHeight;
     }
 
@@ -56,37 +71,52 @@ public class Player implements CollidableObject{
 
         this.y += ySpeed * dt;
 
+        if (this.playerState == State.ALIVE) {
 
-        //landing the player on top of the terrain
-        if (this.y < terrainHeight) {
-            this.y = terrainHeight;
-            this.ySpeed = 0;
+            //landing the player on top of the terrain
+            if (this.y < terrainHeight) {
+                this.y = terrainHeight;
+                this.ySpeed = 0;
+            }
+
+            //Stop the player at the top of the screen
+            if (this.y > Gdx.graphics.getHeight() - 200) {
+                this.y = Gdx.graphics.getHeight() - 200;
+                this.ySpeed = 0;
+            }
+
+            //fix value for the player to land
+            this.x = 150f;
+
+            //update the player movement frame rate
+            int walkingSpeed = 15;
+            this.frame += walkingSpeed * dt;
+
+            if (this.frame >= 8) {
+                this.frame = 0;
+            }
+
+            //update the smoke movement frame rate
+            int smokeSpeed = 15;
+            this.smokeRate += smokeSpeed * dt;
+
+            if (this.smokeRate >= 4) {
+                this.smokeRate = 0;
+            }
+
         }
 
-        //Stop the player at the top of the screen
-        if (this.y > Gdx.graphics.getHeight() - 200) {
-            this.y = Gdx.graphics.getHeight() - 200;
-            this.ySpeed = 0;
-        }
+        if (this.playerState == State.DYING) {
+            int dyingSpeed = 10;
+            this.dyinRate += dyingSpeed * dt;
 
+            if (this.dyinRate >= 4) {
+                this.dyinRate = 0;
+            }
 
-        //fix value for the player to land
-        this.x = 150f;
-
-        //update the player movement frame rate
-        int walkingSpeed = 15;
-        this.frame += walkingSpeed * dt;
-
-        if (this.frame >= 8) {
-            this.frame = 0;
-        }
-
-        //update the smoke movement frame rate
-        int smokeSpeed = 15;
-        this.smokeRate += smokeSpeed * dt;
-
-        if (this.smokeRate >= 4) {
-            this.smokeRate = 0;
+            if(this.y < - 300 ){
+                this.playerState = State.DEAD;
+            }
         }
 
 
@@ -103,12 +133,21 @@ public class Player implements CollidableObject{
 
     public void render(Batch batch) {
 
-        if(this.y > terrainHeight){
-            batch.draw(this.smoke[(int)this.smokeRate], this.x-43, this.y-113);
+        if (this.playerState == State.ALIVE) {
+            if(this.y > terrainHeight){
+                batch.draw(this.smoke[(int)this.smokeRate], this.x-43, this.y-113);
+            }
+            batch.draw(this.texture[(int)this.frame], this.x, this.y);
         }
-        batch.draw(this.texture[(int)this.frame], this.x, this.y);
 
+        if (this.playerState == State.DYING) {
 
+            batch.draw(this.dying[(int)this.dyinRate], this.x, this.y);
+        }
+
+        if (this.playerState == State.DEAD) {
+
+        }
 
 
     }
@@ -122,7 +161,10 @@ public class Player implements CollidableObject{
 
     @Override
     public void handleCollision() {
-
+        if (this.playerState == State.ALIVE) {
+            this.playerState = State.DYING;
+            this.dyinRate = 0;
+        }
     }
     public void dispose() {
         //this.texture.dispose();
