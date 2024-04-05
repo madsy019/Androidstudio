@@ -6,4 +6,6 @@ public interface CollidableObject {
 
     public Rectangle getBoundingBox();
 
+    public void handleCollision();
+
 }

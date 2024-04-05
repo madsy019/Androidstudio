@@ -130,18 +130,16 @@ public class GameScreen implements Screen {
         });
     }
 
-//    public void update(float f) {
-//        float dt =Gdx.graphics.getDeltaTime();
-//        this.backgroundX -= this.backgroundSpeed * dt;
-//        if (this.backgroundX < -this.background1.getWidth()) this.backgroundX += this.background1.getWidth() -20;
-//
-//    }
     public void update(float f) {
         float dt = Gdx.graphics.getDeltaTime();
 
         this.player.update();
 
         this.enemy.update();
+
+        if (this.player.getBoundingBox().overlaps(this.enemy.getBoundingBox())) {
+            this.enemy.handleCollision();
+        }
 
         //Move background
         this.xPosition -= (this.backgroundSpeed/3) * dt;
@@ -228,19 +226,23 @@ public class GameScreen implements Screen {
 
         batch.end();
 
-        //Begin of shape renderer
-        this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-
-        this.shapeRenderer.setColor(Color.RED);
-
-        if (this.player.getBoundingBox() != null) {
-            this.shapeRenderer.rect(this.player.getBoundingBox().x, this.player.getBoundingBox().y,
-                    this.player.getBoundingBox().width, this.player.getBoundingBox().height);
-        }
-
-
-
-        this.shapeRenderer.end();
+//        //Begin of shape renderer
+//        this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//
+//        this.shapeRenderer.setColor(Color.RED);
+//
+//        if (this.player.getBoundingBox() != null) {
+//            this.shapeRenderer.rect(this.player.getBoundingBox().x, this.player.getBoundingBox().y,
+//                    this.player.getBoundingBox().width, this.player.getBoundingBox().height);
+//        }
+//
+//        if (this.enemy.getBoundingBox() != null) {
+//            this.shapeRenderer.rect(this.enemy.getBoundingBox().x, this.enemy.getBoundingBox().y,
+//                    this.enemy.getBoundingBox().width, this.enemy.getBoundingBox().height);
+//        }
+//
+//
+//        this.shapeRenderer.end();
 
 
         stage.act(Gdx.graphics.getDeltaTime());

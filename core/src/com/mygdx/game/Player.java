@@ -76,7 +76,6 @@ public class Player implements CollidableObject{
     }
 
 
-
     public void jump() {
         this.ySpeed = 350;
 
@@ -94,6 +93,11 @@ public class Player implements CollidableObject{
     public Rectangle getBoundingBox()
     {
         return new Rectangle(x + 30,y + 30,65,90);
+    }
+
+    @Override
+    public void handleCollision() {
+
     }
     public void dispose() {
         //this.texture.dispose();
