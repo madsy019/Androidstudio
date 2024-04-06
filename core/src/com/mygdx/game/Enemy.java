@@ -38,7 +38,7 @@ public class Enemy implements CollidableObject{
         //create texture and animation for the enemy
         this.texture = new Texture[4];
         for (int i = 0 ; i < 4; i++) {
-            this.texture[i] = new Texture("enemies/4/" + i + ".png");
+            this.texture[i] = new Texture("enemies/7/" + i + ".png");
 
         }
 
@@ -97,7 +97,7 @@ public class Enemy implements CollidableObject{
 
     @Override
     public Rectangle getBoundingBox() {
-        return new Rectangle(this.position.x + 40,this.position.y + terrainHeight + 30,55,90);
+        return new Rectangle(this.position.x + 66,this.position.y + terrainHeight + 35,55,69);
     }
 
     @Override

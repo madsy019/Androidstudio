@@ -110,6 +110,15 @@ public class Player implements CollidableObject{
         }
 
         if (this.playerState == State.DYING) {
+
+            if(this.y < - 300 ){
+                this.playerState = State.DEAD;
+            }
+            //Stop the player at the top of the screen
+            if (this.y > Gdx.graphics.getHeight() - 200) {
+                this.y = Gdx.graphics.getHeight() - 200;
+                this.ySpeed = 0;
+            }
             int dyingSpeed = 8;
             this.dyinRate += dyingSpeed * dt;
 
@@ -117,10 +126,7 @@ public class Player implements CollidableObject{
                 this.dyinRate = 0;
             }
 
-            if(this.y < - 300 ){
-                this.playerState = State.DEAD;
 
-            }
         }
 
 
@@ -128,7 +134,7 @@ public class Player implements CollidableObject{
 
 
     public void jump() {
-        this.ySpeed = 300;
+        this.ySpeed = 250;
 
     }
 

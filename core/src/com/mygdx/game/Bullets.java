@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Bullets implements CollidableObject {
-    private int speed = 800;
+    private int speed = 700;
 
     Texture texture;
     float xPosition =0;
@@ -47,7 +47,7 @@ public class Bullets implements CollidableObject {
     @Override
     public Rectangle getBoundingBox()
     {
-        return new Rectangle(this.xPosition + 250,this.yPosition + 5  ,50,40);
+        return new Rectangle(this.xPosition + 248,this.yPosition + 5  ,50,40);
     }
 
     @Override

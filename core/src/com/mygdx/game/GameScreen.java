@@ -187,7 +187,9 @@ public class GameScreen implements Screen {
             //If yes then perform jump action on the player
             if (Gdx.input.getX() < Gdx.graphics.getWidth() / 2) {
 
-                this.player.jump();
+                if ( this.player.getplayerState() == Player.State.ALIVE) {
+                    this.player.jump();
+                }
 
             }
 
@@ -243,7 +245,9 @@ public class GameScreen implements Screen {
             }
         }
 
-        
+        if ( this.player.getplayerState() == Player.State.DEAD) {
+            game.setScreen(MyGdxGame.menuScreen);
+        }
 
     }
 
@@ -289,33 +293,33 @@ public class GameScreen implements Screen {
             batch.end();
 
             //Begin of shape renderer
-//            this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-//
-//            this.shapeRenderer.setColor(Color.RED);
-//
-//            if (this.player.getBoundingBox() != null) {
-//                this.shapeRenderer.rect(this.player.getBoundingBox().x, this.player.getBoundingBox().y,
-//                        this.player.getBoundingBox().width, this.player.getBoundingBox().height);
-//            }
-//
-//            for (Enemy currentEnemy : this.enemyArr) {
-//
-//                if (currentEnemy.getBoundingBox() != null) {
-//                    this.shapeRenderer.rect(currentEnemy.getBoundingBox().x, currentEnemy.getBoundingBox().y,
-//                            currentEnemy.getBoundingBox().width, currentEnemy.getBoundingBox().height);
-//                }
-//            }
-//
-//            for (Bullets bullet : bullets) {
-//                if (bullet.getBoundingBox() != null) {
-//                    this.shapeRenderer.rect(bullet.getBoundingBox().x, bullet.getBoundingBox().y,
-//                            bullet.getBoundingBox().width, bullet.getBoundingBox().height);
-//                }
-//
-//            }
-//
-//
-//            this.shapeRenderer.end();
+            this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+
+            this.shapeRenderer.setColor(Color.RED);
+
+            if (this.player.getBoundingBox() != null) {
+                this.shapeRenderer.rect(this.player.getBoundingBox().x, this.player.getBoundingBox().y,
+                        this.player.getBoundingBox().width, this.player.getBoundingBox().height);
+            }
+
+            for (Enemy currentEnemy : this.enemyArr) {
+
+                if (currentEnemy.getBoundingBox() != null) {
+                    this.shapeRenderer.rect(currentEnemy.getBoundingBox().x, currentEnemy.getBoundingBox().y,
+                            currentEnemy.getBoundingBox().width, currentEnemy.getBoundingBox().height);
+                }
+            }
+
+            for (Bullets bullet : bullets) {
+                if (bullet.getBoundingBox() != null) {
+                    this.shapeRenderer.rect(bullet.getBoundingBox().x, bullet.getBoundingBox().y,
+                            bullet.getBoundingBox().width, bullet.getBoundingBox().height);
+                }
+
+            }
+
+
+            this.shapeRenderer.end();
 
 
             stage.act(Gdx.graphics.getDeltaTime());
