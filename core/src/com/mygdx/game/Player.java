@@ -15,6 +15,8 @@ public class Player implements CollidableObject{
     MyGdxGame game;
     float dyinRate;
 
+
+
     enum State {ALIVE, DYING, DEAD}
     private State playerState;
 
@@ -25,6 +27,10 @@ public class Player implements CollidableObject{
     Texture[] texture = new Texture[8];
     Texture[] smoke = new Texture[4];
     Texture[] dying = new Texture[4];
+
+
+
+
 
 
     float frame = 0;
@@ -111,7 +117,8 @@ public class Player implements CollidableObject{
 
         if (this.playerState == State.DYING) {
 
-            if(this.y < - 300 ){
+            if(this.y < - 4000){
+
                 this.playerState = State.DEAD;
             }
             //Stop the player at the top of the screen
@@ -181,5 +188,6 @@ public class Player implements CollidableObject{
     public State getplayerState(){
         return this.playerState;
     }
+
 }
 
