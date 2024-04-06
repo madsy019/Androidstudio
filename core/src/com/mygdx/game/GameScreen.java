@@ -42,13 +42,21 @@ public class GameScreen implements Screen {
     TextureRegion exitTextureRegion;
     TextureRegionDrawable exitTexRegionDrawable;
 
+    ///for Pause
+    Texture pauseTexture;
+    TextureRegion pauseTextureRegion;
+    TextureRegionDrawable pauseTexRegionDrawable;
+    ImageButton pauseButton;
+
+    boolean isPaused = false; // Flag to check if the game is paused
+
 
     float xPosition = 0;
     float yPosition = 0;
 
     float zPosition = 0;
 
-    float backgroundSpeed = 200;
+    float backgroundSpeed = 100;
 
 
     Player player;
@@ -69,27 +77,6 @@ public class GameScreen implements Screen {
     int screenWidth = Gdx.graphics.getWidth();
 
     ShapeRenderer shapeRenderer;
-
-
-    /*
-    Bullets[] bullets = new Bullets[20];
-
-    for (int i = 0; i < bullets.size; i++) {
-      if (bullets[i] == null || bullets[i].isDead()) {
-        bullets[i] = new Bullets();
-        break;
-      }
-    }
-
-    for (int i = 0; i < bullets.size; i++) {
-      if (bullets[i] != null || !bullets[i].isDead()) {
-        bullets[i].update();
-      }
-    }
-
-     */
-
-
 
 
     // constructor to keep a reference to the main Game class
@@ -114,7 +101,6 @@ public class GameScreen implements Screen {
         randomBackground = MathUtils.random(minValue, maxValue);
 
 
-
         this.background1 = new Texture("Backgrounds/" +"0"+ randomBackground + "/Layer01.png");
 
         this.background2 = new Texture("Backgrounds/" +"0"+ randomBackground + "/Layer02.png");
@@ -127,13 +113,11 @@ public class GameScreen implements Screen {
         int screenHeight = Gdx.graphics.getHeight();
 
 
-//        this.enemy = new Enemy(this, new Vector2(screenWidth + 100, 0));
-
 
         this.stage = new Stage();
 
         // 2nd addition image button to exit
-        exitTexture = new Texture(Gdx.files.internal("UI/CloseBtn.png"));
+        exitTexture = new Texture(Gdx.files.internal("UI/RestartBtn.png"));
         exitTextureRegion = new TextureRegion(exitTexture);
         exitTexRegionDrawable = new TextureRegionDrawable(exitTextureRegion);
         exitButton = new ImageButton(exitTexRegionDrawable); //Set the button up
@@ -144,7 +128,24 @@ public class GameScreen implements Screen {
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(MyGdxGame.menuScreen);
+                game.create();
+                game.setScreen(MyGdxGame.gameScreen);
+            }
+        });
+
+        // Initialize pause button similar to exit button
+        pauseTexture = new Texture(Gdx.files.internal("UI/PauseBtn.png")); // Ensure you have a PauseBtn.png in your assets
+        pauseTextureRegion = new TextureRegion(pauseTexture);
+        pauseTexRegionDrawable = new TextureRegionDrawable(pauseTextureRegion);
+        pauseButton = new ImageButton(pauseTexRegionDrawable); // Set the button up
+
+        pauseButton.setPosition(Gdx.graphics.getWidth() - pauseButton.getWidth() -150, Gdx.graphics.getHeight() - pauseButton.getHeight() - 20f);
+        stage.addActor(pauseButton);
+
+        pauseButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                isPaused = !isPaused; // Toggle pause state
             }
         });
     }
@@ -152,7 +153,12 @@ public class GameScreen implements Screen {
     public void update(float f) {
         float dt = Gdx.graphics.getDeltaTime();
 
+        if (isPaused) {
+            return; // Skip update logic if the game is paused
+        }
+
         this.player.update();
+
 
 
         //Move background
@@ -237,8 +243,7 @@ public class GameScreen implements Screen {
             }
         }
 
-
-
+        
 
     }
 
@@ -250,6 +255,10 @@ public class GameScreen implements Screen {
 
         batch.begin();
 
+        if (!isPaused) {
+            this.update(f); // Only update if the game is not paused
+        }
+
 
         batch.draw(this.background1, this.xPosition, 0);
         batch.draw(this.background1, this.xPosition + this.background1.getWidth(), 0);
@@ -260,6 +269,8 @@ public class GameScreen implements Screen {
         batch.draw(this.terrian, this.zPosition, 0);
         batch.draw(this.terrian, this.zPosition + this.terrian.getWidth(), 0);
         batch.draw(this.terrian, (this.zPosition + this.terrian.getWidth()) + +this.terrian.getWidth(), 0);
+
+
 
 
         //render the bullets on the screen from the array.
@@ -278,38 +289,40 @@ public class GameScreen implements Screen {
             batch.end();
 
             //Begin of shape renderer
-            this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-
-            this.shapeRenderer.setColor(Color.RED);
-
-            if (this.player.getBoundingBox() != null) {
-                this.shapeRenderer.rect(this.player.getBoundingBox().x, this.player.getBoundingBox().y,
-                        this.player.getBoundingBox().width, this.player.getBoundingBox().height);
-            }
-
-            for (Enemy currentEnemy : this.enemyArr) {
-
-                if (currentEnemy.getBoundingBox() != null) {
-                    this.shapeRenderer.rect(currentEnemy.getBoundingBox().x, currentEnemy.getBoundingBox().y,
-                            currentEnemy.getBoundingBox().width, currentEnemy.getBoundingBox().height);
-                }
-            }
-
-            for (Bullets bullet : bullets) {
-                if (bullet.getBoundingBox() != null) {
-                    this.shapeRenderer.rect(bullet.getBoundingBox().x, bullet.getBoundingBox().y,
-                            bullet.getBoundingBox().width, bullet.getBoundingBox().height);
-                }
-
-            }
-
-
-            this.shapeRenderer.end();
+//            this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//
+//            this.shapeRenderer.setColor(Color.RED);
+//
+//            if (this.player.getBoundingBox() != null) {
+//                this.shapeRenderer.rect(this.player.getBoundingBox().x, this.player.getBoundingBox().y,
+//                        this.player.getBoundingBox().width, this.player.getBoundingBox().height);
+//            }
+//
+//            for (Enemy currentEnemy : this.enemyArr) {
+//
+//                if (currentEnemy.getBoundingBox() != null) {
+//                    this.shapeRenderer.rect(currentEnemy.getBoundingBox().x, currentEnemy.getBoundingBox().y,
+//                            currentEnemy.getBoundingBox().width, currentEnemy.getBoundingBox().height);
+//                }
+//            }
+//
+//            for (Bullets bullet : bullets) {
+//                if (bullet.getBoundingBox() != null) {
+//                    this.shapeRenderer.rect(bullet.getBoundingBox().x, bullet.getBoundingBox().y,
+//                            bullet.getBoundingBox().width, bullet.getBoundingBox().height);
+//                }
+//
+//            }
+//
+//
+//            this.shapeRenderer.end();
 
 
             stage.act(Gdx.graphics.getDeltaTime());
 
             stage.draw();
+
+
 
     }
     @Override
@@ -320,6 +333,8 @@ public class GameScreen implements Screen {
         this.terrian.dispose();
         exitTexture.dispose();
         this.player.dispose();
+        // Existing dispose logic...
+        pauseTexture.dispose();
 
 
 

@@ -19,7 +19,7 @@ public class Enemy implements CollidableObject{
 
     private Vector2 position;
 
-    private int speed = -250;
+    private int speed = -200;
 
     private float frame = 0;
 

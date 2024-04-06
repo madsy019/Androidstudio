@@ -1,9 +1,12 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 
 
 public class Player implements CollidableObject{
@@ -32,13 +35,13 @@ public class Player implements CollidableObject{
     float x = 0;
     float y = 0;
 
-    float ySpeed = 600;
+    float ySpeed = 500;
 
-    float gravity = 300;
+    float gravity = 200;
 
     float heightCorrection = 27;
 
-    float backgroundSpeed = 200;
+    float backgroundSpeed = 100;
 
 
     public Player(GameScreen game) {
@@ -89,7 +92,7 @@ public class Player implements CollidableObject{
             this.x = 150f;
 
             //update the player movement frame rate
-            int walkingSpeed = 15;
+            int walkingSpeed = 10;
             this.frame += walkingSpeed * dt;
 
             if (this.frame >= 8) {
@@ -97,7 +100,7 @@ public class Player implements CollidableObject{
             }
 
             //update the smoke movement frame rate
-            int smokeSpeed = 15;
+            int smokeSpeed = 10;
             this.smokeRate += smokeSpeed * dt;
 
             if (this.smokeRate >= 4) {
@@ -107,7 +110,7 @@ public class Player implements CollidableObject{
         }
 
         if (this.playerState == State.DYING) {
-            int dyingSpeed = 10;
+            int dyingSpeed = 8;
             this.dyinRate += dyingSpeed * dt;
 
             if (this.dyinRate >= 4) {
@@ -116,17 +119,16 @@ public class Player implements CollidableObject{
 
             if(this.y < - 300 ){
                 this.playerState = State.DEAD;
+
             }
         }
-
-
 
 
     }
 
 
     public void jump() {
-        this.ySpeed = 350;
+        this.ySpeed = 300;
 
     }
 
@@ -168,7 +170,10 @@ public class Player implements CollidableObject{
     }
     public void dispose() {
         //this.texture.dispose();
+    }
 
+    public State getplayerState(){
+        return this.playerState;
     }
 }
 
