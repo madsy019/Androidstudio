@@ -267,16 +267,10 @@ public class GameScreen implements Screen {
             this.update(f); // Only update if the game is not paused
         }
 
+        drawBackground(this.background1, this.xPosition);
+        drawBackground(this.background2, this.yPosition);
+        drawBackground(this.terrian, this.yPosition);
 
-        batch.draw(this.background1, this.xPosition, 0);
-        batch.draw(this.background1, this.xPosition + this.background1.getWidth(), 0);
-        batch.draw(this.background1, (this.xPosition + this.background1.getWidth()) + +this.background1.getWidth(), 0);
-        batch.draw(this.background2, this.yPosition, 0);
-        batch.draw(this.background2, this.yPosition + this.background2.getWidth(), 0);
-        batch.draw(this.background2, (this.yPosition + this.background2.getWidth()) + this.background2.getWidth(), 0);
-        batch.draw(this.terrian, this.zPosition, 0);
-        batch.draw(this.terrian, this.zPosition + this.terrian.getWidth(), 0);
-        batch.draw(this.terrian, (this.zPosition + this.terrian.getWidth()) + +this.terrian.getWidth(), 0);
 
         if ( this.player.getplayerState() == Player.State.DYING) {
             batch.draw(this.gameOver,  450, -50);
@@ -366,5 +360,11 @@ public class GameScreen implements Screen {
     @Override
     public void hide() {
         Gdx.app.log("GameScreen: ","gameScreen hide called");
+    }
+
+    public void drawBackground(Texture texture, Float position){
+        batch.draw(texture, position, 0);
+        batch.draw(texture, position + texture.getWidth(), 0);
+        batch.draw(texture, (position + texture.getWidth()) + +texture.getWidth(), 0);
     }
 }
