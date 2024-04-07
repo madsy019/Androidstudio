@@ -15,7 +15,7 @@ public class Player implements CollidableObject{
     MyGdxGame game;
     float dyinRate;
 
-
+    int lives = 3; // Initialize the player's lives
 
     enum State {ALIVE, DYING, DEAD}
     private State playerState;
@@ -117,9 +117,12 @@ public class Player implements CollidableObject{
 
         if (this.playerState == State.DYING) {
 
-            if(this.y < - 4000){
 
+            if(this.y < - 4000){
                 this.playerState = State.DEAD;
+                if(lives > 0){
+                    this.playerState = State.ALIVE;
+                }
             }
             //Stop the player at the top of the screen
             if (this.y > Gdx.graphics.getHeight() - 200) {
@@ -133,12 +136,9 @@ public class Player implements CollidableObject{
                 this.dyinRate = 0;
             }
 
-
         }
 
-
     }
-
 
     public void jump() {
         this.ySpeed = 250;
@@ -178,6 +178,7 @@ public class Player implements CollidableObject{
     public void handleCollision() {
         if (this.playerState == State.ALIVE) {
             this.playerState = State.DYING;
+            lives -=1;
             this.dyinRate = 0;
         }
     }
@@ -188,6 +189,7 @@ public class Player implements CollidableObject{
     public State getplayerState(){
         return this.playerState;
     }
+
 
 }
 

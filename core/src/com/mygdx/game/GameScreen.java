@@ -22,66 +22,66 @@ import java.util.ArrayList;
 
 public class GameScreen implements Screen {
 
-    MyGdxGame game; // Note it’s "MyGdxGame" not "Game"
-    Stage stage;
-    SpriteBatch batch;
+    MyGdxGame game; // Reference to the main game object to access global properties and methods
+    Stage stage; // Stage for managing UI elements like buttons
+    SpriteBatch batch; // For rendering textures and sprites on the screen
 
     int terrainHeight = 111;
-    float minY = 0;
-    float maxY =  Gdx.graphics.getHeight() - 400;
+    float minY = 0; // Minimum Y value for enemy spawning
+    float maxY = Gdx.graphics.getHeight() - 400; // Maximum Y value for enemy spawning
 
-    //Textures for backgrounds and terrain
+    // Textures for backgrounds, terrain, game over screen, and player lives
     Texture background1;
     Texture background2;
-
     Texture terrian;
-
     Texture gameOver;
+    Texture playerLives;
 
+    // UI components
+    ImageButton resetButton;
+    Texture resetTexture;
+    TextureRegion resetTextureRegion;
+    TextureRegionDrawable resetTexRegionDrawable;
 
-    ImageButton exitButton;
-    Texture exitTexture;
-    TextureRegion exitTextureRegion;
-    TextureRegionDrawable exitTexRegionDrawable;
-
-    ///for Pause
+    // Pause button and its related textures
     Texture pauseTexture;
     TextureRegion pauseTextureRegion;
     TextureRegionDrawable pauseTexRegionDrawable;
     ImageButton pauseButton;
 
-    boolean isPaused = false; // Flag to check if the game is paused
+    //Exit button and its textures
+    ImageButton exitButton;
+    Texture exitTexture;
+    TextureRegion exitTextureRegion;
+    TextureRegionDrawable exitTexRegionDrawable;
 
 
+
+    boolean isPaused = false; // Flag for toggling game pause
+
+    // Background position and speed variables
     float xPosition = 0;
     float yPosition = 0;
-
     float zPosition = 0;
-
     float backgroundSpeed = 100;
 
+    Player player; // Player character
+    Array<Bullets> bullets; // Active bullets in the game
+    Array<Enemy> enemyArr; // Active enemies in the game
 
-    Player player;
+    private long lastAppear; // Last time an enemy appeared
+    private int enemyDelay = 200; // Time between enemy spawns
 
-    Array<Bullets> bullets;
+    private long lastFired; // Last time a bullet was fired
+    private int shootDelay = 450; // Time between shots
 
-    Array<Enemy> enemyArr;
+    int screenWidth = Gdx.graphics.getWidth(); // Screen width
 
-    private long lastAppear;
-
-
-    private int enemyDelay = 200;
-
-    private long lastFired;
-    private int shootDelay = 450;
-
-    //get the screen width initially
-    int screenWidth = Gdx.graphics.getWidth();
-
-    ShapeRenderer shapeRenderer;
+    ShapeRenderer shapeRenderer; // For debugging, can draw shapes like rectangles around sprites
 
 
     // constructor to keep a reference to the main Game class
+    // Constructor initializes player, bullets, and enemies
     public GameScreen(MyGdxGame game) {
 
         this.game = game;
@@ -90,6 +90,8 @@ public class GameScreen implements Screen {
 
         enemyArr = new Array<Enemy>();
     }
+
+    // Initialize game elements like textures, player, enemies, UI components
     public void create() {
 
         Gdx.app.log("GameScreen: ", "gameScreen create");
@@ -97,6 +99,7 @@ public class GameScreen implements Screen {
 
         this.shapeRenderer = new ShapeRenderer();
 
+        // Select a random background
         int randomBackground = 2;
         int minValue = 1;
         int maxValue = 4;
@@ -111,47 +114,21 @@ public class GameScreen implements Screen {
 
         this.gameOver = new Texture("UI/gameover.png");
 
+        this.playerLives = new Texture("UI/hudplayerIco.png"); //load player lives texture
+
         this.player = new Player(this);
 
         int screenWidth = Gdx.graphics.getWidth();
         int screenHeight = Gdx.graphics.getHeight();
 
-
-
+        //Create stage and set up reset , pause and exit to menu
         this.stage = new Stage();
+        setupResetButton();
+        setupPauseButton();
+        setUpExitButton();
 
-        // 2nd addition image button to exit
-        exitTexture = new Texture(Gdx.files.internal("UI/RestartBtn.png"));
-        exitTextureRegion = new TextureRegion(exitTexture);
-        exitTexRegionDrawable = new TextureRegionDrawable(exitTextureRegion);
-        exitButton = new ImageButton(exitTexRegionDrawable); //Set the button up
 
-        exitButton.setPosition(Gdx.graphics.getWidth() / 2 - (exitButton.getWidth() / 2) - 120f, Gdx.graphics.getHeight() - 100f);
-        stage.addActor(exitButton);
-        Gdx.input.setInputProcessor(stage);
-        exitButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.create();
-                game.setScreen(MyGdxGame.gameScreen);
-            }
-        });
 
-        // Initialize pause button similar to exit button
-        pauseTexture = new Texture(Gdx.files.internal("UI/PauseBtn.png")); // Ensure you have a PauseBtn.png in your assets
-        pauseTextureRegion = new TextureRegion(pauseTexture);
-        pauseTexRegionDrawable = new TextureRegionDrawable(pauseTextureRegion);
-        pauseButton = new ImageButton(pauseTexRegionDrawable); // Set the button up
-
-        pauseButton.setPosition(Gdx.graphics.getWidth() / 2 - (exitButton.getWidth() / 2) +20 , Gdx.graphics.getHeight() - 100f);
-        stage.addActor(pauseButton);
-
-        pauseButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                isPaused = !isPaused; // Toggle pause state
-            }
-        });
     }
 
     public void update(float f) {
@@ -163,8 +140,6 @@ public class GameScreen implements Screen {
 
         this.player.update();
 
-
-
         //Move background
         this.xPosition -= (this.backgroundSpeed/3) * dt;
 
@@ -172,19 +147,12 @@ public class GameScreen implements Screen {
 
         this.zPosition -= (this.backgroundSpeed) * dt;
 
-
-        if (this.xPosition + this.background1.getWidth() < 0) {
-            this.xPosition = 0;
-        }
-        if(this.yPosition + this.background2.getWidth() < 0){
-            this.yPosition = 0;
-        }
-
-        if(this.zPosition + this.terrian.getWidth() < 0){
-            this.zPosition = 0;
-        }
+        moveBackground(this.xPosition, this.background1);
+        moveBackground(this.yPosition, this.background2);
+        moveBackground(this.zPosition, this.terrian);
 
         //Check to see if the screen is being touched
+        ///should temporory disabel this for 5 seconds if the fuel is limited
         if (Gdx.input.isTouched()) {
 
             //Check to see if left half of the screen is touched.
@@ -196,7 +164,6 @@ public class GameScreen implements Screen {
                 }
 
             }
-
             //shoots bullets
             if (System.currentTimeMillis() > lastFired + this.shootDelay) {
                 //Check to see if right half of the screen is touched
@@ -206,7 +173,6 @@ public class GameScreen implements Screen {
                 }
             }
         }
-
 
             //generate enemies
             if(System.currentTimeMillis() > lastAppear + this.enemyDelay){
@@ -223,7 +189,6 @@ public class GameScreen implements Screen {
             if (!enemy.isAlive()) {
                 enemyArr.removeValue(enemy, true);
             }
-
             //handling collision of both enemy and player if they knock
             if (this.player.getBoundingBox().overlaps(enemy.getBoundingBox())) {
                 enemy.handleCollision();
@@ -249,8 +214,13 @@ public class GameScreen implements Screen {
             }
         }
 
+        //check if the player is dead
         if ( this.player.getplayerState() == Player.State.DEAD) {
-            game.setScreen(MyGdxGame.menuScreen);
+
+            if(this.player.lives == 0){
+                game.setScreen(MyGdxGame.menuScreen);
+            }
+
         }
 
     }
@@ -267,15 +237,32 @@ public class GameScreen implements Screen {
             this.update(f); // Only update if the game is not paused
         }
 
+
+
         drawBackground(this.background1, this.xPosition);
         drawBackground(this.background2, this.yPosition);
         drawBackground(this.terrian, this.yPosition);
 
-
-        if ( this.player.getplayerState() == Player.State.DYING) {
-            batch.draw(this.gameOver,  450, -50);
+        if(this.player.lives == 3){
+            renderPlayerLives(playerLives,1500);
+            renderPlayerLives(playerLives,1600);
+            renderPlayerLives(playerLives,1700);
+        } else if (this.player.lives == 2) {
+            renderPlayerLives(playerLives,1500);
+            renderPlayerLives(playerLives,1600);
+        }else if (this.player.lives == 1) {
+            renderPlayerLives(playerLives,1500);
         }
 
+        if ( this.player.getplayerState() == Player.State.DYING) {
+            if(this.player.lives < 1){
+                batch.draw(this.gameOver,  450, -50);
+            }
+            if(this.player.y == -4000 ){
+                this.player.render(this.batch);
+            }
+
+        }
 
         //render the bullets on the screen from the array.
         for (Bullets bullet : bullets) {
@@ -284,12 +271,10 @@ public class GameScreen implements Screen {
 
         for (Enemy enemy : enemyArr) {
             enemy.render(batch);
-
             //Render player
             this.player.render(this.batch);
 
         }
-
             batch.end();
 
             //Begin of shape renderer
@@ -321,30 +306,28 @@ public class GameScreen implements Screen {
 //
 //            this.shapeRenderer.end();
 
-
             stage.act(Gdx.graphics.getDeltaTime());
 
             stage.draw();
-
-
 
     }
     @Override
     public void dispose() {
 
+        //disposing all the textures that were created
         this.background1.dispose();
         this.background2.dispose();
         this.terrian.dispose();
-        exitTexture.dispose();
+        resetTexture.dispose();
         this.player.dispose();
-        pauseTexture.dispose();
-
+        this.pauseTexture.dispose();
         this.gameOver.dispose();
+        this.playerLives.dispose();
+        this.exitTexture.dispose();
 
 
 
     }
-
 
     @Override
     public void resize(int width, int height) { }
@@ -362,9 +345,83 @@ public class GameScreen implements Screen {
         Gdx.app.log("GameScreen: ","gameScreen hide called");
     }
 
+    //method to draw the background on the game screen
     public void drawBackground(Texture texture, Float position){
         batch.draw(texture, position, 0);
         batch.draw(texture, position + texture.getWidth(), 0);
         batch.draw(texture, (position + texture.getWidth()) + +texture.getWidth(), 0);
     }
+
+    //method to move the background on the game screen
+    public void moveBackground(float position, Texture texture){
+        if(position + texture.getWidth() < 0){
+            position= 0;
+        }
+    }
+
+    //method to render the player on the game screen
+    public void renderPlayerLives(Texture player, float xValue){
+        batch.draw(player, xValue, Gdx.graphics.getHeight()-120);
+    }
+
+    public void setupResetButton(){
+
+        //Setting up rest button
+        resetTexture = new Texture(Gdx.files.internal("UI/RestartBtn.png"));
+        resetTextureRegion = new TextureRegion(resetTexture);
+        resetTexRegionDrawable = new TextureRegionDrawable(resetTextureRegion);
+        resetButton = new ImageButton(resetTexRegionDrawable); //Set the button up
+
+        resetButton.setPosition(Gdx.graphics.getWidth() / 2 - (resetButton.getWidth() / 2) - 120f, Gdx.graphics.getHeight() - 100f);
+        stage.addActor(resetButton);
+        Gdx.input.setInputProcessor(stage);
+        resetButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.create();
+                game.setScreen(MyGdxGame.gameScreen);
+            }
+        });
+
+    }
+
+
+
+    public void setupPauseButton(){
+        // Initialize pause button
+        pauseTexture = new Texture(Gdx.files.internal("UI/PauseBtn.png")); // Ensure you have a PauseBtn.png in your assets
+        pauseTextureRegion = new TextureRegion(pauseTexture);
+        pauseTexRegionDrawable = new TextureRegionDrawable(pauseTextureRegion);
+        pauseButton = new ImageButton(pauseTexRegionDrawable); // Set the button up
+
+        pauseButton.setPosition(Gdx.graphics.getWidth() / 2 - (pauseButton.getWidth() / 2) +20 , Gdx.graphics.getHeight() - 100f);
+        stage.addActor(pauseButton);
+
+        pauseButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                isPaused = !isPaused; // Toggle pause state
+            }
+        });
+
+    }
+
+    public void setUpExitButton(){
+
+        exitTexture = new Texture(Gdx.files.internal("UI/CloseBtn.png")); // Ensure you have a PauseBtn.png in your assets
+        exitTextureRegion = new TextureRegion(exitTexture);
+        exitTexRegionDrawable = new TextureRegionDrawable(exitTextureRegion);
+        exitButton = new ImageButton(exitTexRegionDrawable); // Set the button up
+
+        exitButton.setPosition(Gdx.graphics.getWidth() / 2 - (exitButton.getWidth() / 2) -260 , Gdx.graphics.getHeight() - 100f);
+        stage.addActor(exitButton);
+
+        exitButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(MyGdxGame.menuScreen);
+            }
+        });
+    }
+
 }
