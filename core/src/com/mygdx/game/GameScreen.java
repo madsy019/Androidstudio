@@ -128,7 +128,6 @@ public class GameScreen implements Screen {
         setUpExitButton();
 
 
-
     }
 
     public void update(float f) {
@@ -147,20 +146,30 @@ public class GameScreen implements Screen {
 
         this.zPosition -= (this.backgroundSpeed) * dt;
 
-        moveBackground(this.xPosition, this.background1);
-        moveBackground(this.yPosition, this.background2);
-        moveBackground(this.zPosition, this.terrian);
+        if (this.xPosition + this.background1.getWidth() < 0) {
+            this.xPosition = 0;
+        }
+        if(this.yPosition + this.background2.getWidth() < 0){
+            this.yPosition = 0;
+        }
+        if(this.zPosition + this.terrian.getWidth() < 0){
+            this.zPosition = 0;
+        }
 
         //Check to see if the screen is being touched
-        ///should temporory disabel this for 5 seconds if the fuel is limited
-        if (Gdx.input.isTouched()) {
 
+        if (Gdx.input.isTouched()) {
             //Check to see if left half of the screen is touched.
             //If yes then perform jump action on the player
             if (Gdx.input.getX() < Gdx.graphics.getWidth() / 2) {
 
                 if ( this.player.getplayerState() == Player.State.ALIVE) {
-                    this.player.jump();
+                    //enable to jump if player is alive
+                    if(this.player.hasFuel()== true){
+                        this.player.jump();
+                        this.player.fuel -= this.player.fuelConsumptionPerJump *dt; // Consume fuel
+                    }
+
                 }
 
             }
@@ -172,20 +181,27 @@ public class GameScreen implements Screen {
                     this.lastFired = System.currentTimeMillis();
                 }
             }
+        }else{
+            //if player is not jumping recharage fuel
+            this.player.fuel = Math.min(this.player.fuel + this.player.fuelRechargeRate * dt, this.player.maxFuel);
         }
 
-            //generate enemies
+            //generate enemies at random time intervals
             if(System.currentTimeMillis() > lastAppear + this.enemyDelay){
+
                 float randomEnemyDelay = MathUtils.random(1500, 2000);
                 enemyDelay = (int) randomEnemyDelay;
                 float randomY = MathUtils.random(minY, maxY);
+
                 enemyArr.add(new Enemy(this, new Vector2(Gdx.graphics.getWidth() + 300, randomY)));
                 this.lastAppear = System.currentTimeMillis();
             }
 
+        //Check for the enemy in the array and update them
         for (Enemy enemy: enemyArr) {
             enemy.update();
 
+            //Remove enemy from array if they are not alive
             if (!enemy.isAlive()) {
                 enemyArr.removeValue(enemy, true);
             }
@@ -201,6 +217,7 @@ public class GameScreen implements Screen {
         for (Bullets bullet : bullets){
             bullet.update();
 
+            //Remove bullets from array if they are not live
             if (!bullet.isAlive()) {
                 bullets.removeValue(bullet, true);
             }
@@ -217,6 +234,7 @@ public class GameScreen implements Screen {
         //check if the player is dead
         if ( this.player.getplayerState() == Player.State.DEAD) {
 
+            //And if players lives are all gone end game and go to main menu
             if(this.player.lives == 0){
                 game.setScreen(MyGdxGame.menuScreen);
             }
@@ -238,11 +256,12 @@ public class GameScreen implements Screen {
         }
 
 
-
+        //Draw all the backgrounds, and terrain
         drawBackground(this.background1, this.xPosition);
         drawBackground(this.background2, this.yPosition);
         drawBackground(this.terrian, this.yPosition);
 
+        //Check for players lives and render respective number of lives on screen
         if(this.player.lives == 3){
             renderPlayerLives(playerLives,1500);
             renderPlayerLives(playerLives,1600);
@@ -254,10 +273,14 @@ public class GameScreen implements Screen {
             renderPlayerLives(playerLives,1500);
         }
 
+
         if ( this.player.getplayerState() == Player.State.DYING) {
+            //if the player is dying and there are no more lives left. render game over logo
             if(this.player.lives < 1){
                 batch.draw(this.gameOver,  450, -50);
             }
+
+            //If there are lives left render the player again
             if(this.player.y == -4000 ){
                 this.player.render(this.batch);
             }
@@ -269,13 +292,17 @@ public class GameScreen implements Screen {
             bullet.render(batch);
         }
 
+        //Render enemies on the Screen
         for (Enemy enemy : enemyArr) {
             enemy.render(batch);
-            //Render player
-            this.player.render(this.batch);
-
         }
-            batch.end();
+
+        //Render player
+        this.player.render(this.batch);
+
+
+
+        batch.end();
 
             //Begin of shape renderer
 //            this.shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -306,9 +333,9 @@ public class GameScreen implements Screen {
 //
 //            this.shapeRenderer.end();
 
-            stage.act(Gdx.graphics.getDeltaTime());
+        stage.act(Gdx.graphics.getDeltaTime());
 
-            stage.draw();
+        stage.draw();
 
     }
     @Override
@@ -349,15 +376,9 @@ public class GameScreen implements Screen {
     public void drawBackground(Texture texture, Float position){
         batch.draw(texture, position, 0);
         batch.draw(texture, position + texture.getWidth(), 0);
-        batch.draw(texture, (position + texture.getWidth()) + +texture.getWidth(), 0);
+        batch.draw(texture, (position + texture.getWidth()) + + texture.getWidth(), 0);
     }
 
-    //method to move the background on the game screen
-    public void moveBackground(float position, Texture texture){
-        if(position + texture.getWidth() < 0){
-            position= 0;
-        }
-    }
 
     //method to render the player on the game screen
     public void renderPlayerLives(Texture player, float xValue){

@@ -2,8 +2,10 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -29,9 +31,12 @@ public class Player implements CollidableObject{
     Texture[] dying = new Texture[4];
 
 
+    public float fuel = 100; // Initial fuel
+    public float maxFuel = 100; // Maximum fuel
+    public float fuelConsumptionPerJump = 15; // Fuel consumed per jump
+    public float fuelRechargeRate = 5; // Fuel recharge rate per second
 
-
-
+    private BitmapFont font;
 
     float frame = 0;
 
@@ -52,19 +57,28 @@ public class Player implements CollidableObject{
 
     public Player(GameScreen game) {
 
+
         // As the player is moving adding it to an array of Textures
         for (int i = 0 ; i < 8; i++) {
             this.texture[i] = new Texture("players/3/walk/" + i + ".png");
         }
+
         // Texture for smoke
         for (int i = 0 ; i < 4; i++) {
             this.smoke[i] = new Texture("players/smoke/" + i + ".png");
         }
 
+
         // Texture for smoke
         for (int i = 0 ; i < 4; i++) {
             this.dying[i] = new Texture("players/3/die/" + i + ".png");
         }
+
+        // Initialize the font
+        font = new BitmapFont();
+        font.setColor(Color.WHITE); // Set the font color
+        font.getData().setScale(4f); // Set the font scale if needed
+
 
         //Assign enemy state as alive
         this.playerState = State.ALIVE;
@@ -80,6 +94,8 @@ public class Player implements CollidableObject{
 
         this.y += ySpeed * dt;
 
+
+        //Enable these animations if the player is alive
         if (this.playerState == State.ALIVE) {
 
             //landing the player on top of the terrain
@@ -115,11 +131,13 @@ public class Player implements CollidableObject{
 
         }
 
+        //Enable these animations if the player is dying
         if (this.playerState == State.DYING) {
-
 
             if(this.y < - 4000){
                 this.playerState = State.DEAD;
+
+                //if there are lives left change the player state back to alive aso that the player is rendered back on screen
                 if(lives > 0){
                     this.playerState = State.ALIVE;
                 }
@@ -129,6 +147,8 @@ public class Player implements CollidableObject{
                 this.y = Gdx.graphics.getHeight() - 200;
                 this.ySpeed = 0;
             }
+
+            //Dying animation
             int dyingSpeed = 8;
             this.dyinRate += dyingSpeed * dt;
 
@@ -140,6 +160,7 @@ public class Player implements CollidableObject{
 
     }
 
+    //Method for player to jump
     public void jump() {
         this.ySpeed = 250;
 
@@ -148,13 +169,19 @@ public class Player implements CollidableObject{
 
     public void render(Batch batch) {
 
+        //When player is alive render the following
         if (this.playerState == State.ALIVE) {
             if(this.y > terrainHeight){
+                //Enable smoke if the player is above the terrain when using the jetpack
                 batch.draw(this.smoke[(int)this.smokeRate], this.x-43, this.y-113);
             }
             batch.draw(this.texture[(int)this.frame], this.x, this.y);
+
+            // Display the fuel amount
+            font.draw(batch, "Fuel: " + fuel, 100, Gdx.graphics.getHeight() - 50);
         }
 
+        //When player is alive render the following
         if (this.playerState == State.DYING) {
 
             batch.draw(this.dying[(int)this.dyinRate], this.x, this.y);
@@ -174,21 +201,31 @@ public class Player implements CollidableObject{
         return new Rectangle(x + 30,y + 30,65,90);
     }
 
+    //Method to handle collision of the player
     @Override
     public void handleCollision() {
         if (this.playerState == State.ALIVE) {
             this.playerState = State.DYING;
+            //reduce players lif if a collision has happened
             lives -=1;
+            //reset animation
             this.dyinRate = 0;
         }
     }
     public void dispose() {
         //this.texture.dispose();
+        // Dispose of the font
+        font.dispose();
     }
 
+    //Method to get the player state
     public State getplayerState(){
         return this.playerState;
     }
+    public boolean hasFuel() {
+        return fuel >= 0;
+    }
+
 
 
 }
